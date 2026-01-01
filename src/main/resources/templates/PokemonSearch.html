@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Inventory</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: auto; }
+    h1, h2 { color: #2c3e50; }
+    h2 {
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      margin-top: 30px;
+    }
+    .search-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .search-top-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
+    .search-top-row label { flex: 0 0 auto; }
+    #typeDropdown { flex: 0 0 150px; min-width: 150px; }
+    #gradedToggleBtn { flex: 0 0 auto; }
+    .search-inputs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .search-inputs input { flex: 1 1 140px; min-width: 120px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    #gradedFields { display: flex; gap: 10px; flex: 1 1 300px; }
+    button { padding: 8px 15px; border: none; border-radius: 4px; background-color: #3498db; color: white; font-size: 16px; cursor: pointer; }
+    button:hover { background-color: #2980b9; }
+    .card-container { display: flex; flex-wrap: wrap; gap: 20px; }
+    .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 320px; }
+    .card h3 { margin-top: 0; color: #333; font-size: 1.2em; }
+    .card table { width: 100%; }
+    .card td { padding: 6px 0; border-bottom: 1px solid #eee; }
+    .card td:first-child { font-weight: bold; width: 120px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Pokémon Inventory</h1>
+
+  <div class="search-form">
+    <div class="search-top-row">
+      <label for="typeDropdown">Choose category:</label>
+      <select id="typeDropdown" name="type" onchange="toggleViews()">
+        <option value="singles">Singles</option>
+        <option value="sealed">Sealed</option>
+      </select>
+      <button id="gradedToggleBtn" type="button" onclick="toggleGradedCondition()">Condition</button>
+    </div>
+
+    <hr/>
+
+    <!-- Singles Search -->
+    <div id="singlesSearch" class="search-inputs">
+      <label for="singlesName" class="hidden">Name</label>
+      <input id="singlesName" type="text" placeholder="Name...">
+      <label for="singlesCollectorNumber" class="hidden">Collector #</label>
+      <input id="singlesCollectorNumber" type="text" placeholder="Collector #...">
+      <label for="singlesCondition" class="hidden">Condition</label>
+      <input id="singlesCondition" type="text" placeholder="Condition...">
+      <div id="gradedFields" class="hidden">
+        <label for="gradedCompany" class="hidden">Grade Company</label>
+        <input id="gradedCompany" type="text" placeholder="Grade Company...">
+        <label for="gradedValue" class="hidden">Graded Value</label>
+        <input id="gradedValue" type="text" placeholder="Graded...">
+      </div>
+      <label for="singlesId" class="hidden">ID</label>
+      <input id="singlesId" type="number" placeholder="ID...">
+    </div>
+
+    <!-- Sealed Search -->
+    <div id="sealedSearch" class="search-inputs hidden">
+      <label for="sealedName" class="hidden">Name</label>
+      <input id="sealedName" type="text" placeholder="Name...">
+      <label for="sealedProductType" class="hidden">Product Type</label>
+      <input id="sealedProductType" type="text" placeholder="Product Type...">
+      <label for="sealedId" class="hidden">ID</label>
+      <input id="sealedId" type="number" placeholder="ID...">
+    </div>
+
+    <button type="button" style="margin-top: 15px;" onclick="loadProducts()">Search</button>
+  </div>
+
+  <!-- Singles Results -->
+  <div id="singlesView">
+    <h2>Singles</h2>
+    <div id="singlesResults" class="card-container"></div>
+  </div>
+
+  <!-- Sealed Results -->
+  <div id="sealedView" class="hidden">
+    <h2>Sealed</h2>
+    <div id="sealedResults" class="card-container"></div>
+  </div>
+</div>
+
+<script>
+  function resetInputs(container) {
+    container.querySelectorAll('input').forEach(input => input.value = '');
+  }
+
+  function toggleViews() {
+    const singlesOn = document.getElementById('typeDropdown').value === 'singles';
+    const singlesSearch = document.getElementById('singlesSearch');
+    const sealedSearch = document.getElementById('sealedSearch');
+    const singlesView = document.getElementById('singlesView');
+    const sealedView = document.getElementById('sealedView');
+    const gradedBtn = document.getElementById('gradedToggleBtn');
+
+    if (singlesOn) resetInputs(singlesSearch);
+    else resetInputs(sealedSearch);
+
+    singlesSearch.classList.toggle('hidden', !singlesOn);
+    sealedSearch.classList.toggle('hidden', singlesOn);
+    singlesView.classList.toggle('hidden', !singlesOn);
+    sealedView.classList.toggle('hidden', singlesOn);
+    gradedBtn.style.display = singlesOn ? 'inline-block' : 'none';
+
+    if (singlesOn) {
+      document.getElementById('singlesCondition').style.display = 'block';
+      document.getElementById('gradedFields').style.display = 'none';
+      gradedBtn.textContent = "Condition";
+    }
+  }
+
+  function toggleGradedCondition() {
+    const gradedFields = document.getElementById('gradedFields');
+    const conditionField = document.getElementById('singlesCondition');
+    const toggleBtn = document.getElementById('gradedToggleBtn');
+
+    if (conditionField.style.display !== 'none') {
+      conditionField.style.display = 'none';
+      gradedFields.style.display = 'flex';
+      toggleBtn.textContent = "Graded";
+    } else {
+      gradedFields.style.display = 'none';
+      conditionField.style.display = 'block';
+      toggleBtn.textContent = "Condition";
+    }
+  }
+
+  function loadProducts() {
+    const type = document.getElementById('typeDropdown').value;
+    let url = `/inventory/pokemon/search?type=${type}`;
+
+    if (type === 'singles') {
+      const idQuery = document.getElementById('singlesId').value || '';
+      const nameQuery = document.getElementById('singlesName').value || '';
+      const conditionQuery = document.getElementById('singlesCondition').style.display !== 'none'
+              ? document.getElementById('singlesCondition').value : '';
+      const gradedCompanyQuery = document.getElementById('gradedCompany').value || '';
+      const gradedValueQuery = document.getElementById('gradedValue').value || '';
+      const collectorNumberQuery = document.getElementById('singlesCollectorNumber').value || '';
+
+      url += `&idQuery=${idQuery}&nameQuery=${encodeURIComponent(nameQuery)}&conditionQuery=${encodeURIComponent(conditionQuery)}&gradedCompanyQuery=${encodeURIComponent(gradedCompanyQuery)}&gradedValueQuery=${encodeURIComponent(gradedValueQuery)}&collectorNumberQuery=${encodeURIComponent(collectorNumberQuery)}`;
+    } else {
+      const sealedIdQuery = document.getElementById('sealedId').value || '';
+      const nameQuery = document.getElementById('sealedName').value || '';
+      const productTypeQuery = document.getElementById('sealedProductType').value || '';
+      url += `&idQuery=${sealedIdQuery}&nameQuery=${encodeURIComponent(nameQuery)}&productTypeQuery=${encodeURIComponent(productTypeQuery)}`;
+    }
+
+    fetch(url)
+            .then(res => res.json())
+            .then(data => displayProducts(type, data))
+            .catch(err => console.error(err));
+  }
+
+  function displayProducts(type, data) {
+    const containerId = type === 'singles' ? 'singlesResults' : 'sealedResults';
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    if (!data || data.length === 0) {
+      container.innerHTML = `<p>No results found.</p>`;
+      return;
+    }
+
+    data.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      let html = `<h3>${product.name || ''}</h3><table>`;
+      for (const key in product) {
+        const value = product[key];
+        if (value !== null && value !== undefined && value !== '') {
+          html += `<tr><td>${key}</td><td>${value}</td></tr>`;
+        }
+      }
+      html += '</table>';
+      card.innerHTML = html;
+      container.appendChild(card);
+    });
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleViews();
+    loadProducts(); // Load default type immediately
+  });
+</script>
+
+</body>
+</html>
