@@ -18,6 +18,8 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
              AND (:gradedCompany IS NULL OR :gradedCompany = '' OR LOWER(p.gradedCompany) LIKE LOWER(CONCAT('%', :gradedCompany, '%')))
              AND (:graded IS NULL OR :graded = '' OR LOWER(p.graded) LIKE LOWER(CONCAT('%', :graded, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
+             AND (:set IS NULL OR :set = '' OR LOWER(p.set) LIKE LOWER (CONCAT('%', :set, '%')))
+             AND (:year IS NULL OR :year = '' OR p.year = :year)
            """)
     List<PokemonSingles> findGradedMode(
             @Param("id") Long id,
@@ -25,7 +27,9 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
             @Param("collectorNumber") String collectorNumber,
             @Param("gradedCompany") String gradedCompany,
             @Param("graded") String graded,
-            @Param("specialty") String specialty
+            @Param("specialty") String specialty,
+            @Param("set") String set,
+            @Param("year") int year
     );
 
     @Query("""
@@ -35,12 +39,16 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
              AND (:collectorNumber IS NULL OR :collectorNumber = '' OR p.collectorNumber = :collectorNumber)
              AND (:condition IS NULL OR :condition = '' OR LOWER(p.condition) LIKE LOWER(CONCAT('%', :condition, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
+             AND (:set IS NULL OR :set = '' OR LOWER(p.set) LIKE LOWER (CONCAT('%', :set, '%')))
+             AND (:year IS NULL OR :year = '' OR p.year = :year)
            """)
     List<PokemonSingles> findConditionMode(
             @Param("id") Long id,
             @Param("name") String name,
             @Param("collectorNumber") String collectorNumber,
             @Param("condition") String condition,
-            @Param("specialty") String specialty
+            @Param("specialty") String specialty,
+            @Param("set") String set,
+            @Param("year") int year
     );
 }

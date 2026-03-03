@@ -28,7 +28,9 @@ public class PokemonService {
                     q.getCollectorNumber(),
                     q.getGradedCompany(),
                     q.getGraded(),
-                    q.getSpecialty()
+                    q.getSpecialty(),
+                    q.getSet(),
+                    q.getYear()
             );
         } else {
             return singlesRepo.findConditionMode(
@@ -36,7 +38,9 @@ public class PokemonService {
                     q.getName(),
                     q.getCollectorNumber(),
                     q.getCondition(),
-                    q.getSpecialty()
+                    q.getSpecialty(),
+                    q.getSet(),
+                    q.getYear()
             );
         }
     }
@@ -46,7 +50,9 @@ public class PokemonService {
                 q.getId(),
                 q.getName(),
                 q.getProductType(),
-                q.getSpecialty()
+                q.getSpecialty(),
+                q.getSet(),
+                q.getYear()
         );
     }
 

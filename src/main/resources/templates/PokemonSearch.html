@@ -1,173 +1,861 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pokémon Inventory</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f7f6;
-      color: #333;
-      margin: 0;
-      padding: 20px;
+    :root{
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 10px 25px rgba(17,24,39,.08);
+      --shadow-soft: 0 2px 10px rgba(17,24,39,.06);
+      --blue: #2563eb;
+      --blue2:#1d4ed8;
+      --green:#16a34a;
+      --chip:#eef2ff;
+      --thumb-border:#f5c400;
+      --focus: 0 0 0 3px rgba(37, 99, 235, .18);
+      --radius: 14px;
     }
-    .container { max-width: 1200px; margin: auto; }
-    h1, h2 { color: #2c3e50; }
-    h2 {
-      border-bottom: 2px solid #e0e0e0;
-      padding-bottom: 10px;
-      margin-top: 30px;
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
     }
-    .search-form {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+
+    .container{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 16px 40px;
     }
-    .search-top-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
-    .search-top-row label { flex: 0 0 auto; }
-    #typeDropdown { flex: 0 0 150px; min-width: 150px; }
-    #gradedToggleBtn { flex: 0 0 auto; }
-    .search-inputs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-    .search-inputs input { flex: 1 1 140px; min-width: 120px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-    #gradedFields { display: flex; gap: 10px; flex: 1 1 300px; }
-    button { padding: 8px 15px; border: none; border-radius: 4px; background-color: #3498db; color: white; font-size: 16px; cursor: pointer; }
-    button:hover { background-color: #2980b9; }
-    .card-container { display: flex; flex-wrap: wrap; gap: 20px; }
-    .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 320px; }
-    .card h3 { margin-top: 0; color: #333; font-size: 1.2em; }
-    .card table { width: 100%; }
-    .card td { padding: 6px 0; border-bottom: 1px solid #eee; }
-    .card td:first-child { font-weight: bold; width: 120px; }
-    .hidden { display: none; }
+
+    .header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    h1{
+      margin:0;
+      font-size: 26px;
+      letter-spacing: -0.02em;
+    }
+
+    .sub{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* Search panel */
+    .panel{
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .panel-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tabs{
+      display:flex;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .tab-btn{
+      appearance:none;
+      border:0;
+      background: transparent;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #374151;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .tab-btn.active{
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 1px 0 rgba(0,0,0,.03);
+    }
+
+    .mode-row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:flex;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    .pill button{
+      border:0;
+      background: transparent;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor:pointer;
+      color:#374151;
+    }
+    .pill button.active{
+      background: var(--card);
+      color: var(--text);
+    }
+
+    .inline{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      user-select:none;
+    }
+    .inline input[type="checkbox"]{
+      width: 16px;
+      height: 16px;
+      accent-color: var(--blue);
+    }
+
+    .divider{
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+
+    .fields{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      align-items:end;
+    }
+
+    .field{
+      grid-column: span 3;
+      min-width: 160px;
+    }
+    .field.w2{ grid-column: span 2; min-width: 130px; }
+    .field.w4{ grid-column: span 4; min-width: 220px; }
+    .field.w6{ grid-column: span 6; min-width: 260px; }
+
+    label{
+      display:block;
+      font-size: 12px;
+      font-weight: 800;
+      color: #374151;
+      margin-bottom: 6px;
+      letter-spacing: .02em;
+    }
+
+    input{
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      background: #fff;
+      font-size: 14px;
+      color: var(--text);
+    }
+    input:focus{
+      border-color: rgba(37, 99, 235, .6);
+      box-shadow: var(--focus);
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn{
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      color: white;
+      background: var(--blue);
+      transition: transform .04s ease, background .12s ease;
+    }
+    .btn:hover{ background: var(--blue2); }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn.secondary{
+      background: #111827;
+    }
+    .btn.secondary:hover{
+      background: #0b1220;
+    }
+
+    .hidden{ display:none !important; }
+
+    /* Results */
+    .section-head{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+    h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing: -.01em;
+    }
+    .count{
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .field{ grid-column: span 6; }
+      .field.w2{ grid-column: span 6; }
+      .field.w4{ grid-column: span 6; }
+      .field.w6{ grid-column: span 12; }
+    }
+    @media (max-width: 640px){
+      .grid{ grid-template-columns: 1fr; }
+      .field{ grid-column: span 12; min-width: 0; }
+      .field.w2,.field.w4,.field.w6{ grid-column: span 12; min-width: 0; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: 12px;
+      display:flex;
+      gap: 12px;
+      min-height: 132px;
+    }
+
+    .thumb{
+      width: 96px;
+      min-width: 96px;
+      height: 132px;
+      border-radius: 10px;
+      border: 4px solid var(--thumb-border);
+      overflow:hidden;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      position: relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(17,24,39,.55);
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .content{
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title{
+      font-size: 16px;
+      font-weight: 900;
+      margin: 2px 0 6px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .line{
+      color: var(--muted);
+      font-size: 13px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      background: var(--chip);
+      color: #3730a3;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,48,163,.12);
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 110px 1fr;
+      gap: 6px 10px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .k{
+      color:#374151;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: capitalize;
+    }
+    .v{
+      color:#111827;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    details{
+      margin-top: 8px;
+    }
+    summary{
+      cursor:pointer;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 13px;
+      user-select:none;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+
+    .empty{
+      color: var(--muted);
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
   </style>
 </head>
+
 <body>
-
 <div class="container">
-  <h1>Pokémon Inventory</h1>
-
-  <div class="search-form">
-    <div class="search-top-row">
-      <label for="typeDropdown">Choose category:</label>
-      <select id="typeDropdown" name="type" onchange="toggleViews()">
-        <option value="singles">Singles</option>
-        <option value="sealed">Sealed</option>
-      </select>
-      <button id="gradedToggleBtn" type="button" onclick="toggleGradedCondition()">Condition</button>
+  <div class="header">
+    <div>
+      <h1>Pokémon Inventory</h1>
+      <div class="sub">Search Singles and Sealed. Results shown in a clean 3-column list layout.</div>
     </div>
+  </div>
 
-    <hr/>
-
-    <!-- Singles Search -->
-    <div id="singlesSearch" class="search-inputs">
-      <label for="singlesName" class="hidden">Name</label>
-      <input id="singlesName" type="text" placeholder="Name...">
-      <label for="singlesCollectorNumber" class="hidden">Collector #</label>
-      <input id="singlesCollectorNumber" type="text" placeholder="Collector #...">
-      <label for="singlesCondition" class="hidden">Condition</label>
-      <input id="singlesCondition" type="text" placeholder="Condition...">
-      <div id="gradedFields" class="hidden">
-        <label for="gradedCompany" class="hidden">Grade Company</label>
-        <input id="gradedCompany" type="text" placeholder="Grade Company...">
-        <label for="gradedValue" class="hidden">Graded Value</label>
-        <input id="gradedValue" type="text" placeholder="Graded...">
+  <div class="panel">
+    <div class="panel-top">
+      <!-- Tap to switch Singles/Sealed -->
+      <div class="tabs" role="tablist" aria-label="Category">
+        <button class="tab-btn active" id="tabSingles" type="button" onclick="setCategory('singles')" role="tab" aria-selected="true">Singles</button>
+        <button class="tab-btn" id="tabSealed" type="button" onclick="setCategory('sealed')" role="tab" aria-selected="false">Sealed</button>
       </div>
-      <label for="singlesId" class="hidden">ID</label>
-      <input id="singlesId" type="number" placeholder="ID...">
+
+      <!-- Singles-only toggles -->
+      <div class="mode-row" id="singlesModes">
+        <div class="pill" aria-label="Condition / Graded toggle">
+          <button id="btnRaw" type="button" class="active" onclick="setSinglesMode('raw')">Condition</button>
+          <button id="btnGraded" type="button" onclick="setSinglesMode('graded')">Graded</button>
+        </div>
+
+        <label class="inline" id="gradeFilterWrap">
+          <input id="useGradeFilter" type="checkbox" onchange="toggleGradeFields()" />
+          Filter by grade
+        </label>
+      </div>
     </div>
 
-    <!-- Sealed Search -->
-    <div id="sealedSearch" class="search-inputs hidden">
-      <label for="sealedName" class="hidden">Name</label>
-      <input id="sealedName" type="text" placeholder="Name...">
-      <label for="sealedProductType" class="hidden">Product Type</label>
-      <input id="sealedProductType" type="text" placeholder="Product Type...">
-      <label for="sealedId" class="hidden">ID</label>
-      <input id="sealedId" type="number" placeholder="ID...">
+    <div class="divider"></div>
+
+    <!-- Singles Fields -->
+    <div id="singlesSearch" class="fields">
+      <div class="field w6">
+        <label for="singlesName">Name</label>
+        <input id="singlesName" type="text" placeholder="e.g., Pokemon Catcher" />
+      </div>
+
+      <div class="field w2">
+        <label for="singlesCollectorNumber">Collector #</label>
+        <input id="singlesCollectorNumber" type="text" placeholder="e.g., 138/159" />
+      </div>
+
+      <div class="field w4" id="conditionFieldWrap">
+        <label for="singlesCondition">Condition</label>
+        <input id="singlesCondition" type="text" placeholder="e.g., NM, LP, MP..." />
+      </div>
+
+      <!-- NEW: Set + Year -->
+      <div class="field w4">
+        <label for="singlesSet">Set</label>
+        <input id="singlesSet" type="text" placeholder="e.g., Base Set, Crown Zenith..." />
+      </div>
+
+      <div class="field w2">
+        <label for="singlesYear">Year</label>
+        <input id="singlesYear" type="number" inputmode="numeric" placeholder="e.g., 1999" />
+      </div>
+
+      <div class="field w2">
+        <label for="singlesId">ID</label>
+        <input id="singlesId" type="number" placeholder="e.g., 123" />
+      </div>
+
+      <!-- Graded fields (only show if Filter by grade = ON) -->
+      <div class="field w4 hidden" id="gradedCompanyWrap">
+        <label for="gradedCompany">Graded Company</label>
+        <input id="gradedCompany" type="text" placeholder="e.g., PSA, BGS, CGC..." />
+      </div>
+
+      <div class="field w2 hidden" id="gradedValueWrap">
+        <label for="gradedValue">Grade</label>
+        <input id="gradedValue" type="text" placeholder="e.g., 10, 9.5..." />
+      </div>
     </div>
 
-    <button type="button" style="margin-top: 15px;" onclick="loadProducts()">Search</button>
+    <!-- Sealed Fields -->
+    <div id="sealedSearch" class="fields hidden">
+      <div class="field w6">
+        <label for="sealedName">Name</label>
+        <input id="sealedName" type="text" placeholder="e.g., Pokemon Day 2026 Collection" />
+      </div>
+
+      <div class="field w4">
+        <label for="sealedProductType">Product Type</label>
+        <input id="sealedProductType" type="text" placeholder="e.g., ETB, Booster Box, Tin..." />
+      </div>
+
+      <!-- NEW: Set + Year -->
+      <div class="field w4">
+        <label for="sealedSet">Set</label>
+        <input id="sealedSet" type="text" placeholder="e.g., Crown Zenith..." />
+      </div>
+
+      <div class="field w2">
+        <label for="sealedYear">Year</label>
+        <input id="sealedYear" type="number" inputmode="numeric" placeholder="e.g., 2026" />
+      </div>
+
+      <div class="field w2">
+        <label for="sealedId">ID</label>
+        <input id="sealedId" type="number" placeholder="e.g., 456" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn secondary" type="button" onclick="clearSearch()">Clear</button>
+      <button class="btn" type="button" onclick="loadProducts()">Search</button>
+    </div>
   </div>
 
   <!-- Singles Results -->
   <div id="singlesView">
-    <h2>Singles</h2>
-    <div id="singlesResults" class="card-container"></div>
+    <div class="section-head">
+      <h2>Singles</h2>
+      <div class="count" id="singlesCount">—</div>
+    </div>
+    <div id="singlesResults" class="grid"></div>
   </div>
 
   <!-- Sealed Results -->
   <div id="sealedView" class="hidden">
-    <h2>Sealed</h2>
-    <div id="sealedResults" class="card-container"></div>
+    <div class="section-head">
+      <h2>Sealed</h2>
+      <div class="count" id="sealedCount">—</div>
+    </div>
+    <div id="sealedResults" class="grid"></div>
   </div>
 </div>
 
 <script>
-  function resetInputs(container) {
-    container.querySelectorAll('input').forEach(input => input.value = '');
+  let currentCategory = 'singles';    // 'singles' | 'sealed'
+  let singlesMode = 'raw';            // 'raw' | 'graded'
+
+  function setCategory(cat){
+    currentCategory = cat;
+
+    // Tabs
+    const tabSingles = document.getElementById('tabSingles');
+    const tabSealed = document.getElementById('tabSealed');
+
+    tabSingles.classList.toggle('active', cat === 'singles');
+    tabSealed.classList.toggle('active', cat === 'sealed');
+
+    tabSingles.setAttribute('aria-selected', cat === 'singles' ? 'true' : 'false');
+    tabSealed.setAttribute('aria-selected', cat === 'sealed' ? 'true' : 'false');
+
+    // Views + Fields
+    document.getElementById('singlesSearch').classList.toggle('hidden', cat !== 'singles');
+    document.getElementById('sealedSearch').classList.toggle('hidden', cat !== 'sealed');
+
+    document.getElementById('singlesView').classList.toggle('hidden', cat !== 'singles');
+    document.getElementById('sealedView').classList.toggle('hidden', cat !== 'sealed');
+
+    // Singles-only mode row
+    document.getElementById('singlesModes').classList.toggle('hidden', cat !== 'singles');
+
+    // When switching category, keep UI consistent
+    if (cat === 'singles') {
+      setSinglesMode(singlesMode);
+    }
+
+    // Optional: auto-search when you switch tabs (comment out if you don't want it)
+    loadProducts();
   }
 
-  function toggleViews() {
-    const singlesOn = document.getElementById('typeDropdown').value === 'singles';
-    const singlesSearch = document.getElementById('singlesSearch');
-    const sealedSearch = document.getElementById('sealedSearch');
-    const singlesView = document.getElementById('singlesView');
-    const sealedView = document.getElementById('sealedView');
-    const gradedBtn = document.getElementById('gradedToggleBtn');
+  function setSinglesMode(mode){
+    singlesMode = mode;
 
-    if (singlesOn) resetInputs(singlesSearch);
-    else resetInputs(sealedSearch);
+    // Pill active state
+    document.getElementById('btnRaw').classList.toggle('active', mode === 'raw');
+    document.getElementById('btnGraded').classList.toggle('active', mode === 'graded');
 
-    singlesSearch.classList.toggle('hidden', !singlesOn);
-    sealedSearch.classList.toggle('hidden', singlesOn);
-    singlesView.classList.toggle('hidden', !singlesOn);
-    sealedView.classList.toggle('hidden', singlesOn);
-    gradedBtn.style.display = singlesOn ? 'inline-block' : 'none';
+    // Raw shows Condition field
+    document.getElementById('conditionFieldWrap').classList.toggle('hidden', mode !== 'raw');
 
-    if (singlesOn) {
-      document.getElementById('singlesCondition').style.display = 'block';
-      document.getElementById('gradedFields').style.display = 'none';
-      gradedBtn.textContent = "Condition";
+    // Graded shows the grade-filter checkbox, but NOT the grade fields unless checked
+    document.getElementById('gradeFilterWrap').classList.toggle('hidden', mode !== 'graded');
+
+    if (mode !== 'graded') {
+      document.getElementById('useGradeFilter').checked = false;
+    }
+    toggleGradeFields();
+  }
+
+  function toggleGradeFields(){
+    const on = (singlesMode === 'graded') && document.getElementById('useGradeFilter').checked;
+
+    document.getElementById('gradedCompanyWrap').classList.toggle('hidden', !on);
+    document.getElementById('gradedValueWrap').classList.toggle('hidden', !on);
+
+    if (!on) {
+      document.getElementById('gradedCompany').value = '';
+      document.getElementById('gradedValue').value = '';
     }
   }
 
-  function toggleGradedCondition() {
-    const gradedFields = document.getElementById('gradedFields');
-    const conditionField = document.getElementById('singlesCondition');
-    const toggleBtn = document.getElementById('gradedToggleBtn');
+  function clearSearch(){
+    // Clear all inputs in both forms
+    document.querySelectorAll('#singlesSearch input, #sealedSearch input').forEach(i => i.value = '');
+    document.getElementById('useGradeFilter').checked = false;
+    setSinglesMode('raw');
+  }
 
-    if (conditionField.style.display !== 'none') {
-      conditionField.style.display = 'none';
-      gradedFields.style.display = 'flex';
-      toggleBtn.textContent = "Graded";
+  // --- Helpers for product rendering ---
+  function firstNonEmpty(obj, keys){
+    for (const k of keys){
+      if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return obj[k];
+    }
+    return '';
+  }
+
+  function prettyLabel(key){
+    // basic label cleanup
+    return String(key)
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/_/g,' ')
+            .replace(/\bId\b/i,'ID');
+  }
+
+  function buildCard(product, type){
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    // Reserve image slot (future DB images)
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+
+    const imageUrl = firstNonEmpty(product, ['imageUrl','imageURL','img','image','thumbnail','thumb']);
+    if (imageUrl) {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = product.name ? `${product.name} image` : 'Product image';
+      thumb.textContent = '';
+      thumb.appendChild(img);
     } else {
-      gradedFields.style.display = 'none';
-      conditionField.style.display = 'block';
-      toggleBtn.textContent = "Condition";
+      thumb.textContent = 'IMAGE';
     }
+
+    const content = document.createElement('div');
+    content.className = 'content';
+
+    const name = firstNonEmpty(product, ['name','cardName','productName']) || '(No name)';
+    const set = firstNonEmpty(product, ['set','setName','set_name']);
+    const year = firstNonEmpty(product, ['year','releaseYear','release_year']);
+    const collector = firstNonEmpty(product, ['collectorNumber','collector_number','number','cardNumber']);
+    const rarity = firstNonEmpty(product, ['rarity']);
+    const condition = firstNonEmpty(product, ['condition']);
+    const productType = firstNonEmpty(product, ['productType','product_type','typeName']);
+    const gradedCompany = firstNonEmpty(product, ['gradedCompany','graded_company','gradingCompany']);
+    const grade = firstNonEmpty(product, ['gradedValue','grade','graded_value']);
+
+    const title = document.createElement('div');
+    title.className = 'title';
+    title.title = name;
+    title.textContent = name;
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+
+    // Line 1: Set / ProductType + Year
+    const line1 = document.createElement('div');
+    line1.className = 'line';
+
+    const left1 = (type === 'sealed')
+            ? (productType || set)
+            : (set || '');
+
+    if (left1) {
+      const span = document.createElement('span');
+      span.textContent = left1;
+      line1.appendChild(span);
+    }
+    if (year) {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = `Year: ${year}`;
+      line1.appendChild(chip);
+    }
+    if (!left1 && !year) {
+      line1.textContent = ' '; // keep spacing
+    }
+
+    // Line 2: Rarity / Collector / Condition / Grade
+    const line2 = document.createElement('div');
+    line2.className = 'line';
+
+    if (rarity) line2.appendChild(Object.assign(document.createElement('span'), {textContent: rarity}));
+    if (collector) line2.appendChild(Object.assign(document.createElement('span'), {textContent: `#${collector}`}));
+    if (type === 'singles' && condition) line2.appendChild(Object.assign(document.createElement('span'), {textContent: condition}));
+
+    // If graded fields exist, show them (display-only)
+    if ((gradedCompany || grade) && type === 'singles') {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = `${gradedCompany ? gradedCompany : 'Graded'}${grade ? ` ${grade}` : ''}`;
+      line2.appendChild(chip);
+    }
+
+    meta.appendChild(line1);
+    meta.appendChild(line2);
+
+    // Compact key/value area (only the important ones)
+    const kv = document.createElement('div');
+    kv.className = 'kv';
+
+    const important = [];
+
+    // Always show ID if present
+    const idVal = firstNonEmpty(product, ['id','ID','productId','product_id']);
+    if (idVal) important.push(['ID', idVal]);
+
+    if (type === 'singles') {
+      if (set) important.push(['Set', set]);
+      if (year) important.push(['Year', year]);
+      if (collector) important.push(['Collector #', collector]);
+      if (rarity) important.push(['Rarity', rarity]);
+      if (condition) important.push(['Condition', condition]);
+      if (gradedCompany) important.push(['Grade Co.', gradedCompany]);
+      if (grade) important.push(['Grade', grade]);
+    } else {
+      if (productType) important.push(['Product Type', productType]);
+      if (set) important.push(['Set', set]);
+      if (year) important.push(['Year', year]);
+    }
+
+    // Render only first ~4-6 rows so it stays clean
+    const sliced = important.slice(0, 6);
+    for (const [k, v] of sliced) {
+      const kEl = document.createElement('div');
+      kEl.className = 'k';
+      kEl.textContent = k;
+
+      const vEl = document.createElement('div');
+      vEl.className = 'v';
+      vEl.title = String(v);
+      vEl.textContent = String(v);
+
+      kv.appendChild(kEl);
+      kv.appendChild(vEl);
+    }
+
+    // Optional: show remaining fields in a "More" dropdown (keeps it clean but still debuggable)
+    const knownKeys = new Set([
+      'name','cardName','productName',
+      'set','setName','set_name',
+      'year','releaseYear','release_year',
+      'collectorNumber','collector_number','number','cardNumber',
+      'rarity','condition',
+      'gradedCompany','graded_company','gradingCompany',
+      'gradedValue','grade','graded_value',
+      'productType','product_type','typeName',
+      'imageUrl','imageURL','img','image','thumbnail','thumb',
+      'id','ID','productId','product_id'
+    ]);
+
+    const extras = [];
+    for (const key in product) {
+      if (!Object.prototype.hasOwnProperty.call(product, key)) continue;
+      const val = product[key];
+      if (val === null || val === undefined || String(val).trim() === '') continue;
+      if (!knownKeys.has(key)) extras.push([key, val]);
+    }
+
+    content.appendChild(title);
+    content.appendChild(meta);
+    if (sliced.length) content.appendChild(kv);
+
+    if (extras.length) {
+      const details = document.createElement('details');
+      const summary = document.createElement('summary');
+      summary.textContent = `More details (${extras.length})`;
+      details.appendChild(summary);
+
+      const extraKv = document.createElement('div');
+      extraKv.className = 'kv';
+      extras.slice(0, 10).forEach(([k, v]) => {
+        const kEl = document.createElement('div');
+        kEl.className = 'k';
+        kEl.textContent = prettyLabel(k);
+
+        const vEl = document.createElement('div');
+        vEl.className = 'v';
+        vEl.title = String(v);
+        vEl.textContent = String(v);
+
+        extraKv.appendChild(kEl);
+        extraKv.appendChild(vEl);
+      });
+
+      details.appendChild(extraKv);
+      content.appendChild(details);
+    }
+
+    card.appendChild(thumb);
+    card.appendChild(content);
+    return card;
   }
 
-  function loadProducts() {
-    const type = document.getElementById('typeDropdown').value;
-    let url = `/inventory/pokemon/search?type=${type}`;
+  function displayProducts(type, data){
+    const containerId = type === 'singles' ? 'singlesResults' : 'sealedResults';
+    const countId = type === 'singles' ? 'singlesCount' : 'sealedCount';
+
+    const container = document.getElementById(containerId);
+    const count = document.getElementById(countId);
+
+    container.innerHTML = '';
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      count.textContent = '0 results';
+      container.innerHTML = `<div class="empty">No results found.</div>`;
+      return;
+    }
+
+    count.textContent = `${data.length} result${data.length === 1 ? '' : 's'}`;
+
+    data.forEach(product => {
+      container.appendChild(buildCard(product, type));
+    });
+  }
+
+  function loadProducts(){
+    const type = currentCategory; // 'singles' or 'sealed'
+    let url = `/inventory/pokemon/search?type=${encodeURIComponent(type)}`;
 
     if (type === 'singles') {
       const idQuery = document.getElementById('singlesId').value || '';
       const nameQuery = document.getElementById('singlesName').value || '';
-      const conditionQuery = document.getElementById('singlesCondition').style.display !== 'none'
-              ? document.getElementById('singlesCondition').value : '';
-      const gradedCompanyQuery = document.getElementById('gradedCompany').value || '';
-      const gradedValueQuery = document.getElementById('gradedValue').value || '';
       const collectorNumberQuery = document.getElementById('singlesCollectorNumber').value || '';
 
-      url += `&idQuery=${idQuery}&nameQuery=${encodeURIComponent(nameQuery)}&conditionQuery=${encodeURIComponent(conditionQuery)}&gradedCompanyQuery=${encodeURIComponent(gradedCompanyQuery)}&gradedValueQuery=${encodeURIComponent(gradedValueQuery)}&collectorNumberQuery=${encodeURIComponent(collectorNumberQuery)}`;
+      // NEW
+      const setQuery = document.getElementById('singlesSet').value || '';
+      const yearQuery = document.getElementById('singlesYear').value || '';
+
+      // Raw vs graded behavior
+      let conditionQuery = '';
+      let gradedCompanyQuery = '';
+      let gradedValueQuery = '';
+      let useGradeFilter = false;
+
+      if (singlesMode === 'raw') {
+        conditionQuery = document.getElementById('singlesCondition').value || '';
+      } else {
+        // Graded mode:
+        // default = IGNORE company + grade unless "Filter by grade" enabled
+        useGradeFilter = document.getElementById('useGradeFilter').checked;
+        if (useGradeFilter) {
+          gradedCompanyQuery = document.getElementById('gradedCompany').value || '';
+          gradedValueQuery = document.getElementById('gradedValue').value || '';
+        }
+      }
+
+      url += `&idQuery=${encodeURIComponent(idQuery)}`
+              + `&nameQuery=${encodeURIComponent(nameQuery)}`
+              + `&collectorNumberQuery=${encodeURIComponent(collectorNumberQuery)}`
+              + `&conditionQuery=${encodeURIComponent(conditionQuery)}`
+              + `&gradedCompanyQuery=${encodeURIComponent(gradedCompanyQuery)}`
+              + `&gradedValueQuery=${encodeURIComponent(gradedValueQuery)}`
+              + `&setQuery=${encodeURIComponent(setQuery)}`
+              + `&yearQuery=${encodeURIComponent(yearQuery)}`
+              + `&useGradeFilter=${useGradeFilter ? 'true' : 'false'}`
+              + `&singlesMode=${encodeURIComponent(singlesMode)}`;
     } else {
       const sealedIdQuery = document.getElementById('sealedId').value || '';
       const nameQuery = document.getElementById('sealedName').value || '';
       const productTypeQuery = document.getElementById('sealedProductType').value || '';
-      url += `&idQuery=${sealedIdQuery}&nameQuery=${encodeURIComponent(nameQuery)}&productTypeQuery=${encodeURIComponent(productTypeQuery)}`;
+
+      // NEW
+      const setQuery = document.getElementById('sealedSet').value || '';
+      const yearQuery = document.getElementById('sealedYear').value || '';
+
+      url += `&idQuery=${encodeURIComponent(sealedIdQuery)}`
+              + `&nameQuery=${encodeURIComponent(nameQuery)}`
+              + `&productTypeQuery=${encodeURIComponent(productTypeQuery)}`
+              + `&setQuery=${encodeURIComponent(setQuery)}`
+              + `&yearQuery=${encodeURIComponent(yearQuery)}`;
     }
 
     fetch(url)
@@ -176,39 +864,17 @@
             .catch(err => console.error(err));
   }
 
-  function displayProducts(type, data) {
-    const containerId = type === 'singles' ? 'singlesResults' : 'sealedResults';
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
+  // Enter-to-search
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadProducts();
+  });
 
-    if (!data || data.length === 0) {
-      container.innerHTML = `<p>No results found.</p>`;
-      return;
-    }
-
-    data.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'card';
-
-      let html = `<h3>${product.name || ''}</h3><table>`;
-      for (const key in product) {
-        const value = product[key];
-        if (value !== null && value !== undefined && value !== '') {
-          html += `<tr><td>${key}</td><td>${value}</td></tr>`;
-        }
-      }
-      html += '</table>';
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-  }
-
-  // Initialize page
+  // Init
   document.addEventListener('DOMContentLoaded', () => {
-    toggleViews();
-    loadProducts(); // Load default type immediately
+    setCategory('singles');       // default
+    setSinglesMode('raw');        // default
+    loadProducts();               // initial load
   });
 </script>
-
 </body>
 </html>

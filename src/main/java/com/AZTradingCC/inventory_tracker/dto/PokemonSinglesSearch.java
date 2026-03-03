@@ -9,6 +9,8 @@ public class PokemonSinglesSearch {
     private String gradedCompany;
     private String graded;
     private String specialty;
+    private String set;
+    private int year;
 
     // Constructor
     public PokemonSinglesSearch() {}
@@ -21,6 +23,8 @@ public class PokemonSinglesSearch {
     public String getGradedCompany() { return gradedCompany; }
     public String getGraded() { return graded; }
     public String getSpecialty() { return specialty; }
+    public String getSet() { return set; }
+    public int getYear() { return year; }
 
     // --- SETTERS ---
     public void setId(Long id) { this.id = id; }
@@ -30,6 +34,9 @@ public class PokemonSinglesSearch {
     public void setGradedCompany(String gradedCompany) { this.gradedCompany = gradedCompany; }
     public void setGraded(String graded) { this.graded = graded; }
     public void setSpecialty(String specialty) { this.specialty = specialty; }
+    public void setSet(String set) { this.set = set; }
+    public void setYear(int year) { this.year = year; }
+
 
     // --- Extra helper ---
     public boolean useGraded() {

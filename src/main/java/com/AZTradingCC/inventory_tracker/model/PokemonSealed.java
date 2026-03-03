@@ -4,12 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "\"PokemonSealed\"") // The quotes here are important!
 public class PokemonSealed {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"ID\"")
     private Long id;
 
@@ -24,6 +27,13 @@ public class PokemonSealed {
 
     @Column(name = "\"SPECIALTY\"")
     private String specialty;
+
+    @Column(name = "\"SET\"")
+    private String set;
+
+    @Column(name = "\"YEAR\"")
+    private int year;
+
 
     // --- Getters and Setters (including new ones) ---
 
@@ -65,6 +75,22 @@ public class PokemonSealed {
 
     public void setSpecialty(String specialty) {
         this.specialty = specialty;
+    }
+
+    public String getSet() {
+        return set;
+    }
+
+    public void setSet(String set) {
+        this.set = set;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     // --- ADD GETTERS AND SETTERS FOR THE NEW FIELDS ---

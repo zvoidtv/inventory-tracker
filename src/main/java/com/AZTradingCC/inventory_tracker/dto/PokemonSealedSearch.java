@@ -6,6 +6,8 @@ public class PokemonSealedSearch {
     private String name;
     private String productType;
     private String specialty;
+    private String set;
+    private int year;
 
     // Constructor
     public PokemonSealedSearch() {}
@@ -27,6 +29,14 @@ public class PokemonSealedSearch {
         return specialty;
     }
 
+    public String getSet(){
+        return set;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
     // --- SETTERS (if needed) ---
     public void setId(Long id) {
         this.id = id;
@@ -42,5 +52,13 @@ public class PokemonSealedSearch {
 
     public void setSpecialty(String specialty) {
         this.specialty = specialty;
+    }
+
+    public void setSet(String set) {
+        this.set = set;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }
