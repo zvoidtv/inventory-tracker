@@ -42,7 +42,7 @@ public class PokemonSingles {
     private String set;
 
     @Column(name = "\"YEAR\"")
-    private int year;
+    private Integer year;
 
     // --- Getters and Setters (including new ones) ---
 
@@ -124,7 +124,7 @@ public class PokemonSingles {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 }

@@ -56,9 +56,7 @@ public class PokemonService {
         );
     }
 
-    public List<PokemonSingles> allSingles() {
-        return singlesRepo.findAll();
-    }
+    public List<PokemonSingles> allSingles() {return singlesRepo.findAll();}
 
     public List<PokemonSealed> allSealed() {
         return sealedRepo.findAll();

@@ -16,7 +16,7 @@ public interface PokemonSealedRepository extends JpaRepository<PokemonSealed, Lo
              AND (:productType IS NULL OR :productType = '' OR s.productType = :productType)
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(s.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
              AND (:set IS NULL OR :set = '' OR LOWER(s.set) LIKE LOWER (CONCAT('%', :set, '%')))
-             AND (:year IS NULL OR :year = '' OR s.year = :year)
+             AND (:year IS NULL OR s.year = :year)
            """)
     List<PokemonSealed> findWithFilters(
             @Param("id") Long id,
@@ -24,6 +24,6 @@ public interface PokemonSealedRepository extends JpaRepository<PokemonSealed, Lo
             @Param("productType") String productType,
             @Param("specialty") String specialty,
             @Param("set") String set,
-            @Param("year") int year
+            @Param("year") Integer year
     );
 }

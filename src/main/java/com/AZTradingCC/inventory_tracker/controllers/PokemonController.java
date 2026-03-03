@@ -38,7 +38,9 @@ public class PokemonController {
             @RequestParam(required = false) String gradedCompanyQuery,
             @RequestParam(required = false) String gradedValueQuery,
             @RequestParam(required = false) String collectorNumberQuery,
-            @RequestParam(required = false) String productTypeQuery
+            @RequestParam(required = false) String productTypeQuery,
+            @RequestParam(required = false) String set,
+            @RequestParam(required = false) Integer year
     ) {
         if ("singles".equals(type)) {
             PokemonSinglesSearch search = new PokemonSinglesSearch();
@@ -48,12 +50,16 @@ public class PokemonController {
             search.setGradedCompany(gradedCompanyQuery);
             search.setGraded(gradedValueQuery);
             search.setCollectorNumber(collectorNumberQuery);
+            search.setSet(set);
+            search.setYear(year);
             return pokemonService.searchSingles(search);
         } else {
             PokemonSealedSearch search = new PokemonSealedSearch();
             if (idQuery != null) search.setId(idQuery);
             search.setName(nameQuery);
             search.setProductType(productTypeQuery);
+            search.setSet(set);
+            search.setYear(year);
             return pokemonService.searchSealed(search);
         }
     }

@@ -19,7 +19,7 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
              AND (:graded IS NULL OR :graded = '' OR LOWER(p.graded) LIKE LOWER(CONCAT('%', :graded, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
              AND (:set IS NULL OR :set = '' OR LOWER(p.set) LIKE LOWER (CONCAT('%', :set, '%')))
-             AND (:year IS NULL OR :year = '' OR p.year = :year)
+             AND (:year IS NULL OR p.year = :year)
            """)
     List<PokemonSingles> findGradedMode(
             @Param("id") Long id,
@@ -29,7 +29,7 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
             @Param("graded") String graded,
             @Param("specialty") String specialty,
             @Param("set") String set,
-            @Param("year") int year
+            @Param("year") Integer year
     );
 
     @Query("""
@@ -40,7 +40,7 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
              AND (:condition IS NULL OR :condition = '' OR LOWER(p.condition) LIKE LOWER(CONCAT('%', :condition, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
              AND (:set IS NULL OR :set = '' OR LOWER(p.set) LIKE LOWER (CONCAT('%', :set, '%')))
-             AND (:year IS NULL OR :year = '' OR p.year = :year)
+             AND (:year IS NULL OR p.year = :year)
            """)
     List<PokemonSingles> findConditionMode(
             @Param("id") Long id,
@@ -49,6 +49,6 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
             @Param("condition") String condition,
             @Param("specialty") String specialty,
             @Param("set") String set,
-            @Param("year") int year
+            @Param("year") Integer year
     );
 }
