@@ -127,20 +127,6 @@
       color:var(--text);
     }
 
-    .inline{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:var(--muted);
-      font-size:13px;
-      user-select:none;
-    }
-    .inline input[type="checkbox"]{
-      width:16px;
-      height:16px;
-      accent-color:var(--blue);
-    }
-
     .divider{
       height:1px;
       background:var(--border);
@@ -367,12 +353,6 @@
           <button id="btnRaw" type="button" class="active" onclick="setSinglesMode('raw')">Condition</button>
           <button id="btnGraded" type="button" onclick="setSinglesMode('graded')">Graded</button>
         </div>
-
-        <!-- This matches your idea: in graded mode, ignore company/grade UNLESS the user clicks the checkbox -->
-        <label class="inline" id="gradeFilterWrap">
-          <input id="useGradeFilter" type="checkbox" onchange="toggleGradeFields()" />
-          Filter by grade
-        </label>
       </div>
     </div>
 
@@ -390,12 +370,24 @@
         <input id="singlesCollectorNumber" type="text" placeholder="e.g., 138/159" />
       </div>
 
+      <!-- Condition (raw mode) -->
       <div class="field w4" id="conditionFieldWrap">
         <label for="singlesCondition">Condition</label>
         <input id="singlesCondition" type="text" placeholder="e.g., NM, LP, MP..." />
       </div>
 
-      <!-- NEW: Set + Year -->
+      <!-- Graded fields (graded mode) -->
+      <div class="field w4 hidden" id="gradedCompanyWrap">
+        <label for="gradedCompany">Graded Company</label>
+        <input id="gradedCompany" type="text" placeholder="e.g., PSA, BGS, CGC..." />
+      </div>
+
+      <div class="field w2 hidden" id="gradedValueWrap">
+        <label for="gradedValue">Grade</label>
+        <input id="gradedValue" type="text" placeholder="e.g., 10, Pristine 10, Gold Label 10..." />
+      </div>
+
+      <!-- Set + Year -->
       <div class="field w4">
         <label for="singlesSet">Set</label>
         <input id="singlesSet" type="text" placeholder="e.g., Base Set, Crown Zenith..." />
@@ -409,17 +401,6 @@
       <div class="field w2">
         <label for="singlesId">ID</label>
         <input id="singlesId" type="number" placeholder="e.g., 123" />
-      </div>
-
-      <!-- Graded fields (only show if Filter by grade = ON) -->
-      <div class="field w4 hidden" id="gradedCompanyWrap">
-        <label for="gradedCompany">Graded Company</label>
-        <input id="gradedCompany" type="text" placeholder="e.g., PSA, BGS, CGC..." />
-      </div>
-
-      <div class="field w2 hidden" id="gradedValueWrap">
-        <label for="gradedValue">Grade</label>
-        <input id="gradedValue" type="text" placeholder="e.g., 10, Pristine 10, Gold Label 10..." />
       </div>
     </div>
 
@@ -435,7 +416,6 @@
         <input id="sealedProductType" type="text" placeholder="e.g., ETB, Booster Box, Tin..." />
       </div>
 
-      <!-- NEW: Set + Year -->
       <div class="field w4">
         <label for="sealedSet">Set</label>
         <input id="sealedSet" type="text" placeholder="e.g., Crown Zenith..." />
@@ -506,31 +486,25 @@
     document.getElementById('btnRaw').classList.toggle('active', mode === 'raw');
     document.getElementById('btnGraded').classList.toggle('active', mode === 'graded');
 
-    // Raw shows Condition field
+    // Raw shows Condition, hides graded fields
     document.getElementById('conditionFieldWrap').classList.toggle('hidden', mode !== 'raw');
+    document.getElementById('gradedCompanyWrap').classList.toggle('hidden', mode !== 'graded');
+    document.getElementById('gradedValueWrap').classList.toggle('hidden', mode !== 'graded');
 
-    // Graded shows the checkbox, but NOT the fields unless checked
-    document.getElementById('gradeFilterWrap').classList.toggle('hidden', mode !== 'graded');
-
-    if (mode !== 'graded') document.getElementById('useGradeFilter').checked = false;
-
-    toggleGradeFields();
-  }
-
-  function toggleGradeFields(){
-    const on = (singlesMode === 'graded') && document.getElementById('useGradeFilter').checked;
-    document.getElementById('gradedCompanyWrap').classList.toggle('hidden', !on);
-    document.getElementById('gradedValueWrap').classList.toggle('hidden', !on);
-
-    if (!on) {
+    // Clean up fields when switching modes
+    if (mode === 'raw') {
       document.getElementById('gradedCompany').value = '';
       document.getElementById('gradedValue').value = '';
+    } else {
+      document.getElementById('singlesCondition').value = '';
     }
+
+    // Optional: auto-search when switching modes
+    loadProducts();
   }
 
   function clearSearch(){
     document.querySelectorAll('#singlesSearch input, #sealedSearch input').forEach(i => i.value = '');
-    document.getElementById('useGradeFilter').checked = false;
     setSinglesMode('raw');
   }
 
@@ -561,7 +535,6 @@
 
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
-    // keep placeholder space for future DB images
     thumb.textContent = 'IMAGE';
 
     const content = document.createElement('div');
@@ -623,7 +596,6 @@
     const kv = document.createElement('div');
     kv.className = 'kv';
 
-    // keep it clean (like your screenshot): only key info
     if (idVal !== '') addKV(kv, 'ID', idVal);
     if (setVal) addKV(kv, 'Set', setVal);
     if (yearVal !== '') addKV(kv, 'Year', yearVal);
@@ -646,6 +618,11 @@
     return card;
   }
 
+  function normalizeStr(x){
+    if (x === null || x === undefined) return '';
+    return String(x).trim().toLowerCase();
+  }
+
   function displayProducts(type, data){
     const containerId = type === 'singles' ? 'singlesResults' : 'sealedResults';
     const countId = type === 'singles' ? 'singlesCount' : 'sealedCount';
@@ -661,13 +638,37 @@
       return;
     }
 
-    count.textContent = `${data.length} result${data.length === 1 ? '' : 's'}`;
-    data.forEach(p => container.appendChild(buildCard(p, type)));
+    // IMPORTANT:
+    // When user clicks "Graded", do NOT show any singles with graded == null/empty.
+    // Also apply company/grade filters client-side so it "always works" even if backend isn't toggling modes.
+    let filtered = data;
+
+    if (type === 'singles' && singlesMode === 'graded') {
+      const wantCompany = normalizeStr(document.getElementById('gradedCompany').value);
+      const wantGrade = normalizeStr(document.getElementById('gradedValue').value);
+
+      filtered = filtered.filter(p => normalizeStr(p.graded) !== ''); // hide NULL/empty graded
+      if (wantCompany) filtered = filtered.filter(p => normalizeStr(p.gradedCompany).includes(wantCompany));
+      if (wantGrade) filtered = filtered.filter(p => normalizeStr(p.graded).includes(wantGrade));
+    }
+
+    count.textContent = `${filtered.length} result${filtered.length === 1 ? '' : 's'}`;
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty">No results found.</div>`;
+      return;
+    }
+
+    filtered.forEach(p => container.appendChild(buildCard(p, type)));
   }
 
   function buildSearchParams(){
     const params = new URLSearchParams();
     params.set('type', currentCategory);
+
+    // NOTE (backend):
+    // This HTML sends set + year as query params named "set" and "year".
+    // Your controller should use @RequestParam(required=false) String set, @RequestParam(required=false) Integer year
+    // and then search.setSet(set); search.setYear(year);
 
     if (currentCategory === 'singles') {
       const id = document.getElementById('singlesId').value.trim();
@@ -680,26 +681,26 @@
       if (name) params.set('nameQuery', name);
       if (collector) params.set('collectorNumberQuery', collector);
 
-      // NEW
-      if (setVal) params.set('setQuery', setVal);
-      if (yearVal) params.set('yearQuery', yearVal);
-
-      // Mode behavior:
-      // - raw: send conditionQuery
-      // - graded: ignore grade/company unless user checks filter box
-      // ALSO send singlesMode + useGradeFilter (safe even if backend ignores them)
-      params.set('singlesMode', singlesMode);
-      const useGradeFilter = (singlesMode === 'graded') && document.getElementById('useGradeFilter').checked;
-      params.set('useGradeFilter', useGradeFilter ? 'true' : 'false');
+      // Set + Year (fix: send correct param names)
+      if (setVal) params.set('set', setVal);
+      if (yearVal) params.set('year', yearVal);
 
       if (singlesMode === 'raw') {
         const condition = document.getElementById('singlesCondition').value.trim();
         if (condition) params.set('conditionQuery', condition);
-      } else if (useGradeFilter) {
+
+        // Clear graded params in raw mode
+        params.delete('gradedCompanyQuery');
+        params.delete('gradedValueQuery');
+      } else {
         const company = document.getElementById('gradedCompany').value.trim();
         const grade = document.getElementById('gradedValue').value.trim();
+
         if (company) params.set('gradedCompanyQuery', company);
         if (grade) params.set('gradedValueQuery', grade);
+
+        // In graded mode we do NOT send conditionQuery
+        params.delete('conditionQuery');
       }
     } else {
       const id = document.getElementById('sealedId').value.trim();
@@ -712,9 +713,9 @@
       if (name) params.set('nameQuery', name);
       if (productType) params.set('productTypeQuery', productType);
 
-      // NEW
-      if (setVal) params.set('setQuery', setVal);
-      if (yearVal) params.set('yearQuery', yearVal);
+      // Set + Year (fix: send correct param names)
+      if (setVal) params.set('set', setVal);
+      if (yearVal) params.set('year', yearVal);
     }
 
     return params;
