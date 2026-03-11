@@ -17,7 +17,7 @@
       --blue:#2563eb;
       --blue2:#1d4ed8;
       --chip:#eef2ff;
-      --thumb-border:#f5c400;
+      --thumb-border:#1d4ed8;
       --radius:14px;
       --focus:0 0 0 3px rgba(37,99,235,.16);
     }
@@ -31,9 +31,10 @@
     }
 
     .container{
-      max-width:1180px;
+      max-width:1600px;   /* was 1180 */
+      width: min(1600px, calc(100vw - 32px));
       margin:0 auto;
-      padding:22px 16px 40px;
+      padding:18px 16px 40px; /* slightly tighter top */
     }
 
     .header{
@@ -63,7 +64,7 @@
       box-shadow:var(--shadow2);
       border-radius:var(--radius);
       padding:14px;
-      margin-top:14px;
+      margin-top:10px;
     }
 
     .panel-top{
@@ -218,10 +219,10 @@
     .grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0, 1fr));
-      gap:16px;
+      gap:18px;
     }
     @media (max-width:980px){
-      .grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+      .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
       .field{ grid-column:span 6; }
       .field.w2{ grid-column:span 6; }
       .field.w4{ grid-column:span 6; }
@@ -237,17 +238,17 @@
       border:1px solid var(--border);
       border-radius:var(--radius);
       box-shadow:var(--shadow2);
-      padding:12px;
+      padding:14px;     /* bigger */
       display:flex;
-      gap:12px;
-      min-height:132px;
+      gap:14px;         /* bigger */
+      min-height:170px; /* bigger */
     }
 
     .thumb{
-      width:96px;
-      min-width:96px;
-      height:132px;
-      border-radius:10px;
+      width:132px;      /* bigger */
+      min-width:132px;
+      height:184px;     /* bigger */
+      border-radius:12px;
       border:4px solid var(--thumb-border);
       overflow:hidden;
       background:linear-gradient(135deg, #f3f4f6, #e5e7eb);
@@ -270,7 +271,7 @@
     .content{ flex:1; min-width:0; }
 
     .title{
-      font-size:16px;
+      font-size:17px;
       font-weight:900;
       margin:2px 0 6px;
       line-height:1.2;
@@ -288,7 +289,7 @@
 
     .line{
       color:var(--muted);
-      font-size:13px;
+      font-size:14px;
       display:flex;
       gap:8px;
       flex-wrap:wrap;
@@ -320,7 +321,7 @@
     }
     .v{
       color:#111827;
-      font-size:13px;
+      font-size:14px;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
@@ -341,7 +342,6 @@
   <div class="header">
     <div>
       <h1>Pokémon Inventory</h1>
-      <div class="sub">Singles: "Condition" shows only raw cards. "Graded" shows only graded cards.</div>
     </div>
   </div>
 
