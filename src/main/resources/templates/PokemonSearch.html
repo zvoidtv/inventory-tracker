@@ -260,6 +260,12 @@
       letter-spacing:.08em;
       text-transform:uppercase;
     }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
 
     .content{ flex:1; min-width:0; }
 
@@ -487,7 +493,6 @@
     document.getElementById('gradedCompanyWrap').classList.toggle('hidden', mode !== 'graded');
     document.getElementById('gradedValueWrap').classList.toggle('hidden', mode !== 'graded');
 
-    // clear the opposite fields to avoid confusion
     if (mode === 'raw') {
       document.getElementById('gradedCompany').value = '';
       document.getElementById('gradedValue').value = '';
@@ -513,7 +518,6 @@
   }
 
   function isGradedCard(p){
-    // treat as graded if either graded OR company is present
     return isNonEmpty(p?.graded) || isNonEmpty(p?.gradedCompany);
   }
 
@@ -570,14 +574,33 @@
     const card = document.createElement('div');
     card.className = 'card';
 
+    // Name first so we can use it for image alt text
+    const name = firstNonEmpty(product, ['name']) || '(No name)';
+    const imgUrl = firstNonEmpty(product, ['imageUrl', 'imageURL', 'image_url', 'imgUrl']);
+
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
-    thumb.textContent = 'IMAGE';
+
+    if (imgUrl) {
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.alt = name;
+      img.loading = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+
+      img.onerror = () => {
+        thumb.innerHTML = '';
+        thumb.textContent = 'IMAGE';
+      };
+
+      thumb.appendChild(img);
+    } else {
+      thumb.textContent = 'IMAGE';
+    }
 
     const content = document.createElement('div');
     content.className = 'content';
 
-    const name = firstNonEmpty(product, ['name']) || '(No name)';
     const setVal = firstNonEmpty(product, ['set']);
     const yearVal = firstNonEmpty(product, ['year']);
     const collector = firstNonEmpty(product, ['collectorNumber']);
@@ -677,13 +700,11 @@
 
     if (type === 'singles') {
       if (singlesMode === 'raw') {
-        // ONLY raw cards on the Condition page
         filtered = filtered.filter(isRawCard);
 
         const wantCondition = normalizeStr(document.getElementById('singlesCondition').value);
         if (wantCondition) filtered = filtered.filter(p => normalizeStr(p?.condition).includes(wantCondition));
       } else {
-        // ONLY graded cards on the Graded page, and NO null/empty graded values
         filtered = filtered.filter(p => isNonEmpty(p?.graded));
 
         const wantCompany = normalizeStr(document.getElementById('gradedCompany').value);
