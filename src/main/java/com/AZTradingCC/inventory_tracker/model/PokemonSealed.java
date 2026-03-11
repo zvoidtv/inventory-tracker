@@ -34,6 +34,9 @@ public class PokemonSealed {
     @Column(name = "\"YEAR\"")
     private Integer year;
 
+    @Column(name="\"IMAGE_URL\"")
+    private String imageUrl;
+
 
     // --- Getters and Setters (including new ones) ---
 
@@ -91,6 +94,14 @@ public class PokemonSealed {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     // --- ADD GETTERS AND SETTERS FOR THE NEW FIELDS ---
