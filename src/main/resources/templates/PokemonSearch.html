@@ -17,7 +17,7 @@
       --blue:#2563eb;
       --blue2:#1d4ed8;
       --chip:#eef2ff;
-      --thumb-border:#1d4ed8;
+      --thumb-border:#6b7280;
       --radius:14px;
       --focus:0 0 0 3px rgba(37,99,235,.16);
     }
@@ -31,10 +31,10 @@
     }
 
     .container{
-      max-width:1600px;   /* was 1180 */
+      max-width:1600px;
       width: min(1600px, calc(100vw - 32px));
       margin:0 auto;
-      padding:18px 16px 40px; /* slightly tighter top */
+      padding:18px 16px 40px;
     }
 
     .header{
@@ -49,12 +49,6 @@
       margin:0;
       font-size:26px;
       letter-spacing:-.02em;
-    }
-
-    .sub{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:13px;
     }
 
     /* Search panel */
@@ -221,6 +215,9 @@
       grid-template-columns:repeat(3, minmax(0, 1fr));
       gap:18px;
     }
+
+    /* NOTE: your original media query used 4 columns under 980px.
+       Keeping as you provided, but if you want "smaller screens = fewer columns", tell me. */
     @media (max-width:980px){
       .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
       .field{ grid-column:span 6; }
@@ -238,16 +235,16 @@
       border:1px solid var(--border);
       border-radius:var(--radius);
       box-shadow:var(--shadow2);
-      padding:14px;     /* bigger */
+      padding:14px;
       display:flex;
-      gap:14px;         /* bigger */
-      min-height:170px; /* bigger */
+      gap:14px;
+      min-height:170px;
     }
 
     .thumb{
-      width:132px;      /* bigger */
+      width:132px;
       min-width:132px;
-      height:184px;     /* bigger */
+      height:184px;
       border-radius:12px;
       border:4px solid var(--thumb-border);
       overflow:hidden;
@@ -493,6 +490,7 @@
     document.getElementById('gradedCompanyWrap').classList.toggle('hidden', mode !== 'graded');
     document.getElementById('gradedValueWrap').classList.toggle('hidden', mode !== 'graded');
 
+    // keep these clears (optional) so switching modes doesn't carry stale filters
     if (mode === 'raw') {
       document.getElementById('gradedCompany').value = '';
       document.getElementById('gradedValue').value = '';
@@ -504,8 +502,25 @@
   }
 
   function clearSearch(){
-    document.querySelectorAll('#singlesSearch input, #sealedSearch input').forEach(i => i.value = '');
-    setSinglesMode('raw');
+    // Clear inputs but DO NOT change the current mode/tab.
+    if (currentCategory === 'singles') {
+      // shared singles fields
+      ['singlesName','singlesCollectorNumber','singlesSet','singlesYear','singlesId']
+              .forEach(id => document.getElementById(id).value = '');
+
+      // mode-specific singles fields
+      if (singlesMode === 'raw') {
+        document.getElementById('singlesCondition').value = '';
+      } else {
+        document.getElementById('gradedCompany').value = '';
+        document.getElementById('gradedValue').value = '';
+      }
+    } else {
+      ['sealedName','sealedProductType','sealedSet','sealedYear','sealedId']
+              .forEach(id => document.getElementById(id).value = '');
+    }
+
+    loadProducts();
   }
 
   function normalizeStr(x){
@@ -515,14 +530,6 @@
 
   function isNonEmpty(x){
     return normalizeStr(x) !== '';
-  }
-
-  function isGradedCard(p){
-    return isNonEmpty(p?.graded) || isNonEmpty(p?.gradedCompany);
-  }
-
-  function isRawCard(p){
-    return !isGradedCard(p);
   }
 
   function applySetYearFilters(list, type){
@@ -574,7 +581,6 @@
     const card = document.createElement('div');
     card.className = 'card';
 
-    // Name first so we can use it for image alt text
     const name = firstNonEmpty(product, ['name']) || '(No name)';
     const imgUrl = firstNonEmpty(product, ['imageUrl', 'imageURL', 'image_url', 'imgUrl']);
 
@@ -607,8 +613,8 @@
     const condition = firstNonEmpty(product, ['condition']);
     const productType = firstNonEmpty(product, ['productType']);
     const specialty = firstNonEmpty(product, ['specialty']);
-    const gradedCompany = firstNonEmpty(product, ['gradedCompany']);
-    const graded = firstNonEmpty(product, ['graded']);
+    const gradedCompany = firstNonEmpty(product, ['gradedCompany','gradedcompany','graded_company']);
+    const graded = firstNonEmpty(product, ['graded','grade']);
     const idVal = firstNonEmpty(product, ['id']);
 
     const title = document.createElement('div');
@@ -700,18 +706,39 @@
 
     if (type === 'singles') {
       if (singlesMode === 'raw') {
-        filtered = filtered.filter(isRawCard);
+        // ONLY raw cards on the Condition page
+        filtered = filtered.filter(p => {
+          const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
+          const g  = firstNonEmpty(p, ['graded','grade']);
+          return !isNonEmpty(gc) && !isNonEmpty(g);
+        });
 
         const wantCondition = normalizeStr(document.getElementById('singlesCondition').value);
         if (wantCondition) filtered = filtered.filter(p => normalizeStr(p?.condition).includes(wantCondition));
       } else {
-        filtered = filtered.filter(p => isNonEmpty(p?.graded));
+        // FIXED: graded cards = has company OR grade (not only grade)
+        filtered = filtered.filter(p => {
+          const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
+          const g  = firstNonEmpty(p, ['graded','grade']);
+          return isNonEmpty(gc) || isNonEmpty(g);
+        });
 
         const wantCompany = normalizeStr(document.getElementById('gradedCompany').value);
         const wantGrade = normalizeStr(document.getElementById('gradedValue').value);
 
-        if (wantCompany) filtered = filtered.filter(p => normalizeStr(p?.gradedCompany).includes(wantCompany));
-        if (wantGrade) filtered = filtered.filter(p => normalizeStr(p?.graded).includes(wantGrade));
+        // FIXED: graded company filter uses firstNonEmpty for key variations
+        if (wantCompany) {
+          filtered = filtered.filter(p => {
+            const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
+            return normalizeStr(gc).includes(wantCompany);
+          });
+        }
+        if (wantGrade) {
+          filtered = filtered.filter(p => {
+            const g = firstNonEmpty(p, ['graded','grade']);
+            return normalizeStr(g).includes(wantGrade);
+          });
+        }
       }
     }
 
@@ -728,7 +755,6 @@
     const params = new URLSearchParams();
     params.set('type', currentCategory);
 
-    // Uses param names: set, year (matches your controller change)
     if (currentCategory === 'singles') {
       const id = document.getElementById('singlesId').value.trim();
       const name = document.getElementById('singlesName').value.trim();
