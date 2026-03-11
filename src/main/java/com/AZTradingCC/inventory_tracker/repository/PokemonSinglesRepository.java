@@ -14,7 +14,6 @@ public interface PokemonSinglesRepository extends JpaRepository<PokemonSingles, 
            WHERE (:id IS NULL OR p.id = :id)
              AND (:name IS NULL OR :name = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
              AND (:collectorNumber IS NULL OR :collectorNumber = '' OR p.collectorNumber = :collectorNumber)
-             AND (:condition IS NULL OR :condition = '' OR LOWER(p.condition) LIKE LOWER(CONCAT('%', :condition, '%')))
              AND (:gradedCompany IS NULL OR :gradedCompany = '' OR LOWER(p.gradedCompany) LIKE LOWER(CONCAT('%', :gradedCompany, '%')))
              AND (:graded IS NULL OR :graded = '' OR LOWER(p.graded) LIKE LOWER(CONCAT('%', :graded, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))

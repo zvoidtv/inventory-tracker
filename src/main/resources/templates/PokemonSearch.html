@@ -302,6 +302,17 @@
       border:1px solid rgba(55,48,163,.12);
     }
 
+    .chip-graded{
+      background:#fee2e2;
+      color:#b91c1c;
+      font-weight:900;
+      font-size:13px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid #fecaca;
+      box-shadow:0 1px 4px rgba(185,28,28,.10);
+    }
+
     .kv{
       display:grid;
       grid-template-columns:110px 1fr;
@@ -363,44 +374,44 @@
     <div id="singlesSearch" class="fields">
       <div class="field w6">
         <label for="singlesName">Name</label>
-        <input id="singlesName" type="text" placeholder="e.g., Pokemon Catcher" />
+        <input id="singlesName" type="text" placeholder="Pokemon name" />
       </div>
 
       <div class="field w2">
         <label for="singlesCollectorNumber">Collector #</label>
-        <input id="singlesCollectorNumber" type="text" placeholder="e.g., 138/159" />
+        <input id="singlesCollectorNumber" type="text" placeholder="card/promo #" />
       </div>
 
       <!-- Raw-only -->
       <div class="field w4" id="conditionFieldWrap">
         <label for="singlesCondition">Condition</label>
-        <input id="singlesCondition" type="text" placeholder="e.g., NM, LP, MP..." />
+        <input id="singlesCondition" type="text" placeholder="MNT, NM, LP, MP..." />
       </div>
 
       <!-- Graded-only -->
       <div class="field w4 hidden" id="gradedCompanyWrap">
         <label for="gradedCompany">Graded Company</label>
-        <input id="gradedCompany" type="text" placeholder="e.g., PSA, BGS, CGC..." />
+        <input id="gradedCompany" type="text" placeholder="PSA, BGS, CGC..." />
       </div>
 
       <div class="field w2 hidden" id="gradedValueWrap">
         <label for="gradedValue">Grade</label>
-        <input id="gradedValue" type="text" placeholder="e.g., 10, Pristine 10, Gold Label 10..." />
+        <input id="gradedValue" type="text" placeholder="10, Pristine 10, Gold Label 10..." />
       </div>
 
       <div class="field w4">
         <label for="singlesSet">Set</label>
-        <input id="singlesSet" type="text" placeholder="e.g., Base Set, Crown Zenith..." />
+        <input id="singlesSet" type="text" placeholder="Base Set, Crown Zenith..." />
       </div>
 
       <div class="field w2">
         <label for="singlesYear">Year</label>
-        <input id="singlesYear" type="number" inputmode="numeric" placeholder="e.g., 1999" />
+        <input id="singlesYear" type="number" inputmode="numeric" placeholder="1999" />
       </div>
 
       <div class="field w2">
         <label for="singlesId">ID</label>
-        <input id="singlesId" type="number" placeholder="e.g., 123" />
+        <input id="singlesId" type="number" placeholder="123" />
       </div>
     </div>
 
@@ -408,27 +419,27 @@
     <div id="sealedSearch" class="fields hidden">
       <div class="field w6">
         <label for="sealedName">Name</label>
-        <input id="sealedName" type="text" placeholder="e.g., Pokemon Day 2026 Collection" />
+        <input id="sealedName" type="text" placeholder="Base set Booster box" />
       </div>
 
       <div class="field w4">
         <label for="sealedProductType">Product Type</label>
-        <input id="sealedProductType" type="text" placeholder="e.g., ETB, Booster Box, Tin..." />
+        <input id="sealedProductType" type="text" placeholder="ETB, Booster Box, Tin..." />
       </div>
 
       <div class="field w4">
         <label for="sealedSet">Set</label>
-        <input id="sealedSet" type="text" placeholder="e.g., Crown Zenith..." />
+        <input id="sealedSet" type="text" placeholder="Base set..." />
       </div>
 
       <div class="field w2">
         <label for="sealedYear">Year</label>
-        <input id="sealedYear" type="number" inputmode="numeric" placeholder="e.g., 2026" />
+        <input id="sealedYear" type="number" inputmode="numeric" placeholder="1999" />
       </div>
 
       <div class="field w2">
         <label for="sealedId">ID</label>
-        <input id="sealedId" type="number" placeholder="e.g., 456" />
+        <input id="sealedId" type="number" placeholder="456" />
       </div>
     </div>
 
@@ -651,7 +662,7 @@
     }
     if (type === 'singles' && (gradedCompany || graded)) {
       const chip = document.createElement('span');
-      chip.className = 'chip';
+      chip.className = 'chip-graded';
       chip.textContent = `${gradedCompany ? gradedCompany : 'Graded'}${graded ? ` ${graded}` : ''}`;
       line2.appendChild(chip);
     }

@@ -13,7 +13,7 @@ public interface PokemonSealedRepository extends JpaRepository<PokemonSealed, Lo
            SELECT s FROM PokemonSealed s
            WHERE (:id IS NULL OR s.id = :id)
              AND (:name IS NULL OR :name = '' OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')))
-             AND (:productType IS NULL OR :productType = '' OR s.productType = :productType)
+             AND (:productType IS NULL OR :productType = '' OR LOWER(s.productType) LIKE LOWER(CONCAT('%', :productType, '%')))
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(s.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
              AND (:set IS NULL OR :set = '' OR LOWER(s.set) LIKE LOWER (CONCAT('%', :set, '%')))
              AND (:year IS NULL OR s.year = :year)
