@@ -709,6 +709,8 @@
       return;
     }
 
+    const csrfToken = getCsrfToken();
+
     const url = type === 'singles'
             ? `/inventory/pokemon/singles/${id}/price`
             : `/inventory/pokemon/sealed/${id}/price`;
@@ -716,11 +718,14 @@
     try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-XSRF-TOKEN': csrfToken
+        },
         body: new URLSearchParams({ price: cleaned }).toString()
       });
 
-      if (!res.ok) throw new Error('Failed to update price');
+      if (!res.ok) throw new Error(`Failed to update price: ${res.status}`);
       loadProducts();
     } catch (err) {
       console.error(err);
@@ -729,13 +734,21 @@
   }
 
   async function verifyPrice(type, id){
+    const csrfToken = getCsrfToken();
+
     const url = type === 'singles'
             ? `/inventory/pokemon/singles/${id}/verify`
             : `/inventory/pokemon/sealed/${id}/verify`;
 
     try {
-      const res = await fetch(url, { method: 'POST' });
-      if (!res.ok) throw new Error('Failed to verify price');
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-XSRF-TOKEN': csrfToken
+        }
+      });
+
+      if (!res.ok) throw new Error(`Failed to verify price: ${res.status}`);
       loadProducts();
     } catch (err) {
       console.error(err);
@@ -970,6 +983,15 @@
 
     filtered.forEach(p => container.appendChild(buildCard(p, type)));
   }
+
+  function getCsrfToken(){
+    const cookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('XSRF-TOKEN='));
+
+    return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+  }
+
 
   function buildSearchParams(){
     const params = new URLSearchParams();
