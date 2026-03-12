@@ -7,6 +7,7 @@ import com.AZTradingCC.inventory_tracker.model.PokemonSealed;
 import com.AZTradingCC.inventory_tracker.service.PokemonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.web.csrf.CsrfToken;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,8 +25,9 @@ public class PokemonController {
 
     // 1️⃣ Serve the HTML page
     @GetMapping("/pokemon")
-    public String getPokemonPage() {
-        return "PokemonSearch"; // make sure your template is named PokemonSearch.html
+    public String getPokemonPage(CsrfToken csrfToken) {
+        csrfToken.getToken(); // forces token creation
+        return "PokemonSearch";
     }
 
     // 2️⃣ JSON endpoint for searches
