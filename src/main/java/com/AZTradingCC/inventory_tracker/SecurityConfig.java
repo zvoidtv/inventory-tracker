@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -13,15 +14,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                )
                 .authorizeHttpRequests((requests) -> requests
-                        // This rule protects all pages on your site
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
-                        // This tells Spring to use its default, auto-generated login page
-                        .loginProcessingUrl("/login") // The URL the form should submit to
-                        .defaultSuccessUrl("/home", true) // Where to go after a good login
-                        .permitAll() // Allow everyone to see the login page
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .permitAll()
                 )
                 .logout((logout) -> logout.permitAll());
 
