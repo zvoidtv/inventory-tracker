@@ -7,6 +7,9 @@ import com.AZTradingCC.inventory_tracker.dto.PokemonSealedSearch;
 import com.AZTradingCC.inventory_tracker.repository.PokemonSinglesRepository;
 import com.AZTradingCC.inventory_tracker.repository.PokemonSealedRepository;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import  java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -60,5 +63,47 @@ public class PokemonService {
 
     public List<PokemonSealed> allSealed() {
         return sealedRepo.findAll();
+    }
+
+    public PokemonSingles updateSinglesPrice(Long id, BigDecimal price) {
+        PokemonSingles card = singlesRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Single card not found"));
+
+        card.setPrice(price);
+        card.setLastUpdated(LocalDateTime.now());
+        card.setVerified(true);
+
+        return singlesRepo.save(card);
+    }
+
+    public PokemonSingles verifySinglesPrice(Long id) {
+        PokemonSingles card = singlesRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Single card not found"));
+
+        card.setLastUpdated(LocalDateTime.now());
+        card.setVerified(true);
+
+        return singlesRepo.save(card);
+    }
+
+    public PokemonSealed updateSealedPrice(Long id, BigDecimal price) {
+        PokemonSealed product = sealedRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sealed product not found"));
+
+        product.setPrice(price);
+        product.setLastUpdated(LocalDateTime.now());
+        product.setVerified(true);
+
+        return sealedRepo.save(product);
+    }
+
+    public PokemonSealed verifySealedPrice(Long id) {
+        PokemonSealed product = sealedRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sealed product not found"));
+
+        product.setLastUpdated(LocalDateTime.now());
+        product.setVerified(true);
+
+        return sealedRepo.save(product);
     }
 }

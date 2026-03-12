@@ -51,7 +51,6 @@
       letter-spacing:-.02em;
     }
 
-    /* Search panel */
     .panel{
       background:var(--card);
       border:1px solid var(--border);
@@ -191,7 +190,6 @@
 
     .hidden{ display:none !important; }
 
-    /* Results */
     .section-head{
       display:flex;
       align-items:baseline;
@@ -216,8 +214,6 @@
       gap:18px;
     }
 
-    /* NOTE: your original media query used 4 columns under 980px.
-       Keeping as you provided, but if you want "smaller screens = fewer columns", tell me. */
     @media (max-width:980px){
       .grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
       .field{ grid-column:span 6; }
@@ -298,7 +294,7 @@
     .meta{
       display:flex;
       flex-direction:column;
-      gap:4px;
+      gap:6px;
       margin-bottom:10px;
     }
 
@@ -308,6 +304,7 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
+      align-items:center;
     }
 
     .chip{
@@ -329,6 +326,72 @@
       border-radius:999px;
       border:1px solid #fecaca;
       box-shadow:0 1px 4px rgba(185,28,28,.10);
+    }
+
+    .price-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:2px;
+    }
+
+    .price-box{
+      border:1px solid #bbf7d0;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .04s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .price-box:hover{
+      transform:translateY(-1px);
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .price-fresh{
+      background:#f0fdf4;
+      color:#15803d;
+      border-color:#86efac;
+    }
+
+    .price-warning{
+      background:#fffbeb;
+      color:#b45309;
+      border-color:#fcd34d;
+    }
+
+    .price-stale{
+      background:#fef2f2;
+      color:#b91c1c;
+      border-color:#fca5a5;
+    }
+
+    .price-missing{
+      background:#f3f4f6;
+      color:#6b7280;
+      border-color:#d1d5db;
+    }
+
+    .verify-btn{
+      border:1px solid var(--border);
+      background:#fff;
+      color:#111827;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .verify-btn:hover{
+      background:#f9fafb;
+    }
+
+    .price-date{
+      font-size:12px;
+      color:var(--muted);
     }
 
     .kv{
@@ -388,7 +451,6 @@
 
     <div class="divider"></div>
 
-    <!-- Singles Fields -->
     <div id="singlesSearch" class="fields">
       <div class="field w6">
         <label for="singlesName">Name</label>
@@ -400,13 +462,11 @@
         <input id="singlesCollectorNumber" type="text" placeholder="card/promo #" />
       </div>
 
-      <!-- Raw-only -->
       <div class="field w4" id="conditionFieldWrap">
         <label for="singlesCondition">Condition</label>
         <input id="singlesCondition" type="text" placeholder="MNT, NM, LP, MP..." />
       </div>
 
-      <!-- Graded-only -->
       <div class="field w4 hidden" id="gradedCompanyWrap">
         <label for="gradedCompany">Graded Company</label>
         <input id="gradedCompany" type="text" placeholder="PSA, BGS, CGC..." />
@@ -433,7 +493,6 @@
       </div>
     </div>
 
-    <!-- Sealed Fields -->
     <div id="sealedSearch" class="fields hidden">
       <div class="field w6">
         <label for="sealedName">Name</label>
@@ -467,7 +526,6 @@
     </div>
   </div>
 
-  <!-- Singles Results -->
   <div id="singlesView">
     <div class="section-head">
       <h2>Singles</h2>
@@ -476,7 +534,6 @@
     <div id="singlesResults" class="grid"></div>
   </div>
 
-  <!-- Sealed Results -->
   <div id="sealedView" class="hidden">
     <div class="section-head">
       <h2>Sealed</h2>
@@ -487,8 +544,8 @@
 </div>
 
 <script>
-  let currentCategory = 'singles'; // 'singles' | 'sealed'
-  let singlesMode = 'raw';         // 'raw' | 'graded'
+  let currentCategory = 'singles';
+  let singlesMode = 'raw';
 
   function setCategory(cat){
     currentCategory = cat;
@@ -519,7 +576,6 @@
     document.getElementById('gradedCompanyWrap').classList.toggle('hidden', mode !== 'graded');
     document.getElementById('gradedValueWrap').classList.toggle('hidden', mode !== 'graded');
 
-    // keep these clears (optional) so switching modes doesn't carry stale filters
     if (mode === 'raw') {
       document.getElementById('gradedCompany').value = '';
       document.getElementById('gradedValue').value = '';
@@ -531,13 +587,10 @@
   }
 
   function clearSearch(){
-    // Clear inputs but DO NOT change the current mode/tab.
     if (currentCategory === 'singles') {
-      // shared singles fields
       ['singlesName','singlesCollectorNumber','singlesSet','singlesYear','singlesId']
               .forEach(id => document.getElementById(id).value = '');
 
-      // mode-specific singles fields
       if (singlesMode === 'raw') {
         document.getElementById('singlesCondition').value = '';
       } else {
@@ -559,6 +612,53 @@
 
   function isNonEmpty(x){
     return normalizeStr(x) !== '';
+  }
+
+  function firstNonEmpty(obj, keys){
+    for (const k of keys){
+      if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return obj[k];
+    }
+    return '';
+  }
+
+  function parseDate(value){
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function daysSince(dateValue){
+    const d = parseDate(dateValue);
+    if (!d) return null;
+    const diffMs = Date.now() - d.getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+  function getPriceStatus(product){
+    const price = firstNonEmpty(product, ['price']);
+    const verified = product?.verified;
+    const updated = firstNonEmpty(product, ['lastUpdated', 'timeStamp', 'timeStmp']);
+
+    if (price === '') return 'missing';
+
+    const age = daysSince(updated);
+    if (age === null) return verified ? 'fresh' : 'warning';
+    if (age > 21) return 'stale';
+    if (age > 7) return 'warning';
+    return 'fresh';
+  }
+
+  function formatPrice(value){
+    if (value === null || value === undefined || String(value).trim() === '') return 'Set Price';
+    const num = Number(value);
+    if (Number.isNaN(num)) return `$${value}`;
+    return `$${num.toFixed(2)}`;
+  }
+
+  function formatUpdated(value){
+    const d = parseDate(value);
+    if (!d) return 'Never verified';
+    return `Updated ${d.toLocaleDateString()}`;
   }
 
   function applySetYearFilters(list, type){
@@ -585,13 +685,6 @@
     return out;
   }
 
-  function firstNonEmpty(obj, keys){
-    for (const k of keys){
-      if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return obj[k];
-    }
-    return '';
-  }
-
   function addKV(kv, label, value){
     const kEl = document.createElement('div');
     kEl.className = 'k';
@@ -604,6 +697,85 @@
 
     kv.appendChild(kEl);
     kv.appendChild(vEl);
+  }
+
+  async function updatePrice(type, id){
+    const raw = window.prompt('Enter new price:');
+    if (raw === null) return;
+
+    const cleaned = raw.replace('$', '').trim();
+    if (!cleaned || isNaN(Number(cleaned))) {
+      alert('Please enter a valid number.');
+      return;
+    }
+
+    const url = type === 'singles'
+            ? `/inventory/pokemon/singles/${id}/price`
+            : `/inventory/pokemon/sealed/${id}/price`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ price: cleaned }).toString()
+      });
+
+      if (!res.ok) throw new Error('Failed to update price');
+      loadProducts();
+    } catch (err) {
+      console.error(err);
+      alert('Could not update price.');
+    }
+  }
+
+  async function verifyPrice(type, id){
+    const url = type === 'singles'
+            ? `/inventory/pokemon/singles/${id}/verify`
+            : `/inventory/pokemon/sealed/${id}/verify`;
+
+    try {
+      const res = await fetch(url, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to verify price');
+      loadProducts();
+    } catch (err) {
+      console.error(err);
+      alert('Could not verify price.');
+    }
+  }
+
+  function buildPriceControls(product, type, idVal){
+    const price = firstNonEmpty(product, ['price']);
+    const updated = firstNonEmpty(product, ['lastUpdated', 'timeStamp', 'timeStmp']);
+    const status = getPriceStatus(product);
+
+    const row = document.createElement('div');
+    row.className = 'price-row';
+
+    const priceBox = document.createElement('button');
+    priceBox.type = 'button';
+    priceBox.className = 'price-box';
+    priceBox.classList.add(
+            status === 'fresh' ? 'price-fresh' :
+                    status === 'warning' ? 'price-warning' :
+                            status === 'stale' ? 'price-stale' : 'price-missing'
+    );
+    priceBox.textContent = formatPrice(price);
+    priceBox.onclick = () => updatePrice(type, idVal);
+
+    const verifyBtn = document.createElement('button');
+    verifyBtn.type = 'button';
+    verifyBtn.className = 'verify-btn';
+    verifyBtn.textContent = 'Verify';
+    verifyBtn.onclick = () => verifyPrice(type, idVal);
+
+    const dateText = document.createElement('span');
+    dateText.className = 'price-date';
+    dateText.textContent = formatUpdated(updated);
+
+    row.appendChild(priceBox);
+    row.appendChild(verifyBtn);
+    row.appendChild(dateText);
+    return row;
   }
 
   function buildCard(product, type){
@@ -708,6 +880,10 @@
     meta.appendChild(line1);
     meta.appendChild(line2);
 
+    if (idVal !== '') {
+      meta.appendChild(buildPriceControls(product, type, idVal));
+    }
+
     const kv = document.createElement('div');
     kv.className = 'kv';
 
@@ -749,13 +925,10 @@
     }
 
     let filtered = data;
-
-    // Always apply Set/Year locally so it works even if backend doesn't filter
     filtered = applySetYearFilters(filtered, type);
 
     if (type === 'singles') {
       if (singlesMode === 'raw') {
-        // ONLY raw cards on the Condition page
         filtered = filtered.filter(p => {
           const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
           const g  = firstNonEmpty(p, ['graded','grade']);
@@ -765,7 +938,6 @@
         const wantCondition = normalizeStr(document.getElementById('singlesCondition').value);
         if (wantCondition) filtered = filtered.filter(p => normalizeStr(p?.condition).includes(wantCondition));
       } else {
-        // FIXED: graded cards = has company OR grade (not only grade)
         filtered = filtered.filter(p => {
           const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
           const g  = firstNonEmpty(p, ['graded','grade']);
@@ -775,7 +947,6 @@
         const wantCompany = normalizeStr(document.getElementById('gradedCompany').value);
         const wantGrade = normalizeStr(document.getElementById('gradedValue').value);
 
-        // FIXED: graded company filter uses firstNonEmpty for key variations
         if (wantCompany) {
           filtered = filtered.filter(p => {
             const gc = firstNonEmpty(p, ['gradedCompany','gradedcompany','graded_company']);
@@ -814,7 +985,6 @@
       if (id) params.set('idQuery', id);
       if (name) params.set('nameQuery', name);
       if (collector) params.set('collectorNumberQuery', collector);
-
       if (setVal) params.set('set', setVal);
       if (yearVal) params.set('year', yearVal);
 
@@ -842,7 +1012,6 @@
       if (id) params.set('idQuery', id);
       if (name) params.set('nameQuery', name);
       if (productType) params.set('productTypeQuery', productType);
-
       if (setVal) params.set('set', setVal);
       if (yearVal) params.set('year', yearVal);
     }

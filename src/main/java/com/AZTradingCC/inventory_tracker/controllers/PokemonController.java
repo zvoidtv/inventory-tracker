@@ -8,7 +8,8 @@ import com.AZTradingCC.inventory_tracker.service.PokemonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -40,7 +41,10 @@ public class PokemonController {
             @RequestParam(required = false) String collectorNumberQuery,
             @RequestParam(required = false) String productTypeQuery,
             @RequestParam(required = false) String set,
-            @RequestParam(required = false) Integer year
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(required = false) LocalDateTime timeStmp,
+            @RequestParam(required = false) Boolean verified
     ) {
         if ("singles".equals(type)) {
             PokemonSinglesSearch search = new PokemonSinglesSearch();
@@ -52,6 +56,9 @@ public class PokemonController {
             search.setCollectorNumber(collectorNumberQuery);
             search.setSet(set);
             search.setYear(year);
+            search.setPrice(price);
+            search.setTimeStamp(timeStmp);
+            search.setVerified(verified);
             return pokemonService.searchSingles(search);
         } else {
             PokemonSealedSearch search = new PokemonSealedSearch();
@@ -60,8 +67,45 @@ public class PokemonController {
             search.setProductType(productTypeQuery);
             search.setSet(set);
             search.setYear(year);
+            search.setPrice(price);
+            search.setTimeStamp(timeStmp);
+            search.setVerified(verified);
             return pokemonService.searchSealed(search);
         }
     }
+
+    @ResponseBody
+    @PostMapping(value = "/pokemon/singles/{id}/price", produces = "application/json")
+    public PokemonSingles updateSinglesPrice(
+            @PathVariable Long id,
+            @RequestParam BigDecimal price
+    ) {
+        return pokemonService.updateSinglesPrice(id, price);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/pokemon/singles/{id}/verify", produces = "application/json")
+    public PokemonSingles verifySinglesPrice(@PathVariable Long id) {
+        return pokemonService.verifySinglesPrice(id);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/pokemon/sealed/{id}/price", produces = "application/json")
+    public PokemonSealed updateSealedPrice(
+            @PathVariable Long id,
+            @RequestParam BigDecimal price
+    ) {
+        return pokemonService.updateSealedPrice(id, price);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/pokemon/sealed/{id}/verify", produces = "application/json")
+    public PokemonSealed verifySealedPrice(@PathVariable Long id) {
+        return pokemonService.verifySealedPrice(id);
+    }
+
+
 }
+
+
 

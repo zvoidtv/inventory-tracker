@@ -7,6 +7,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "\"PokemonSingles\"") // The quotes here are important!
 public class PokemonSingles {
@@ -44,8 +47,17 @@ public class PokemonSingles {
     @Column(name = "\"YEAR\"")
     private Integer year;
 
-    @Column(name="\"IMAGE_URL\"")
+    @Column(name="\"IMAGE URL\"")
     private String imageUrl;
+
+    @Column(name = "\"PRICE\"")
+    private BigDecimal price;
+
+    @Column(name = "\"P LAST UPDATED\"")
+    private LocalDateTime lastUpdated;
+
+    @Column(name = "\"P VERIFIED\"")
+    private Boolean verified;
 
     // --- Getters and Setters (including new ones) ---
 
@@ -137,5 +149,29 @@ public class PokemonSingles {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

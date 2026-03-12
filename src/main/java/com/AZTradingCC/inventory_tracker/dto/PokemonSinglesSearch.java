@@ -1,4 +1,6 @@
 package com.AZTradingCC.inventory_tracker.dto;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class PokemonSinglesSearch {
 
@@ -11,6 +13,9 @@ public class PokemonSinglesSearch {
     private String specialty;
     private String set;
     private Integer year;
+    private BigDecimal price;
+    private LocalDateTime timeStmp;
+    private Boolean verified;
 
     // Constructor
     public PokemonSinglesSearch() {}
@@ -34,6 +39,12 @@ public class PokemonSinglesSearch {
 
     public Integer getYear() { return year; }
 
+    public BigDecimal getPrice() { return price; }
+
+    public LocalDateTime getTimeStmp() { return timeStmp; }
+
+    public Boolean getVerified() { return verified; }
+
     // --- SETTERS ---
     public void setId(Long id) { this.id = id; }
 
@@ -52,6 +63,12 @@ public class PokemonSinglesSearch {
     public void setSet(String set) { this.set = set; }
 
     public void setYear(Integer year) { this.year = year; }
+
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public void setTimeStamp(LocalDateTime timeStmp) { this.timeStmp = timeStmp; }
+
+    public void setVerified(Boolean verified) { this.verified = verified; }
 
 
     // --- Extra helper ---
