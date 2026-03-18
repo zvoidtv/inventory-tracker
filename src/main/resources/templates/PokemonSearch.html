@@ -16,6 +16,8 @@
       --shadow2:0 2px 10px rgba(17,24,39,.06);
       --blue:#2563eb;
       --blue2:#1d4ed8;
+      --green:#16a34a;
+      --green2:#15803d;
       --chip:#eef2ff;
       --thumb-border:#6b7280;
       --radius:14px;
@@ -39,16 +41,30 @@
 
     .header{
       display:flex;
-      align-items:flex-end;
+      align-items:flex-start;
       justify-content:space-between;
       gap:14px;
       margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+
+    .header-left{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
 
     h1{
       margin:0;
       font-size:26px;
       letter-spacing:-.02em;
+    }
+
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
     .panel{
@@ -188,6 +204,13 @@
     .btn.secondary{ background:#111827; }
     .btn.secondary:hover{ background:#0b1220; }
 
+    .btn.green{
+      background:var(--green);
+    }
+    .btn.green:hover{
+      background:var(--green2);
+    }
+
     .hidden{ display:none !important; }
 
     .section-head{
@@ -224,6 +247,15 @@
     @media (max-width:640px){
       .grid{ grid-template-columns:1fr; }
       .field,.field.w2,.field.w4,.field.w6{ grid-column:span 12; min-width:0; }
+
+      .header{
+        align-items:stretch;
+      }
+
+      .header-actions{
+        width:100%;
+        justify-content:flex-start;
+      }
     }
 
     .card{
@@ -429,8 +461,18 @@
 <body>
 <div class="container">
   <div class="header">
-    <div>
+    <div class="header-left">
       <h1>Pokémon Inventory</h1>
+    </div>
+
+    <div class="header-actions">
+      <button
+              id="sealedPrintBtn"
+              class="btn green hidden"
+              type="button"
+              onclick="window.location.href='/inventory/pokemon/sealed/print'">
+        Print Sealed
+      </button>
     </div>
   </div>
 
@@ -547,6 +589,10 @@
   let currentCategory = 'singles';
   let singlesMode = 'raw';
 
+  function updateTopButtons(){
+    document.getElementById('sealedPrintBtn').classList.toggle('hidden', currentCategory !== 'sealed');
+  }
+
   function setCategory(cat){
     currentCategory = cat;
 
@@ -560,6 +606,8 @@
     document.getElementById('sealedView').classList.toggle('hidden', cat !== 'sealed');
 
     document.getElementById('singlesModes').classList.toggle('hidden', cat !== 'singles');
+
+    updateTopButtons();
 
     if (cat === 'singles') setSinglesMode(singlesMode, false);
 
@@ -994,7 +1042,6 @@
     return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
   }
 
-
   function buildSearchParams(){
     const params = new URLSearchParams();
     params.set('type', currentCategory);
@@ -1060,6 +1107,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     setCategory('singles');
     setSinglesMode('raw', false);
+    updateTopButtons();
     loadProducts();
   });
 </script>

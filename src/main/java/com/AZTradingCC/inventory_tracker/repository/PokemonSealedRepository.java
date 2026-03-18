@@ -17,6 +17,7 @@ public interface PokemonSealedRepository extends JpaRepository<PokemonSealed, Lo
              AND (:specialty IS NULL OR :specialty = '' OR LOWER(s.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
              AND (:set IS NULL OR :set = '' OR LOWER(s.set) LIKE LOWER (CONCAT('%', :set, '%')))
              AND (:year IS NULL OR s.year = :year)
+             AND (:quantity IS NULL OR s.quantity = :quantity)
            """)
     List<PokemonSealed> findWithFilters(
             @Param("id") Long id,
@@ -24,6 +25,17 @@ public interface PokemonSealedRepository extends JpaRepository<PokemonSealed, Lo
             @Param("productType") String productType,
             @Param("specialty") String specialty,
             @Param("set") String set,
-            @Param("year") Integer year
+            @Param("year") Integer year,
+            @Param("quantity") Integer quantity
     );
+
+    @Query("""
+           SELECT s FROM PokemonSealed s
+           WHERE s.quantity >= 1
+           ORDER BY
+               CASE WHEN s.productType IS NULL THEN 1 ELSE 0 END,
+               s.productType,
+               s.name
+           """)
+    List<PokemonSealed> findInStock();
 }

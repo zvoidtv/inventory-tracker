@@ -13,6 +13,7 @@ public class PokemonSealedSearch {
     private BigDecimal price;
     private LocalDateTime timeStmp;
     private Boolean verified;
+    private Integer quantity;
 
     // Constructor
     public PokemonSealedSearch() {}
@@ -36,6 +37,8 @@ public class PokemonSealedSearch {
 
     public Boolean getVerified() {return verified;}
 
+    public Integer getQuantity() {return quantity;}
+
     // --- SETTERS (if needed) ---
     public void setId(Long id) {this.id = id;}
 
@@ -54,4 +57,6 @@ public class PokemonSealedSearch {
     public void setTimeStamp(LocalDateTime timeStmp) {this.timeStmp = timeStmp;}
 
     public void setVerified(Boolean verified) {this.verified = verified;}
+
+    public void setQuantity(Integer quantity) {this.quantity = quantity;}
 }

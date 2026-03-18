@@ -9,7 +9,7 @@ import com.AZTradingCC.inventory_tracker.repository.PokemonSealedRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import  java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -55,11 +55,14 @@ public class PokemonService {
                 q.getProductType(),
                 q.getSpecialty(),
                 q.getSet(),
-                q.getYear()
+                q.getYear(),
+                q.getQuantity()
         );
     }
 
-    public List<PokemonSingles> allSingles() {return singlesRepo.findAll();}
+    public List<PokemonSingles> allSingles() {
+        return singlesRepo.findAll();
+    }
 
     public List<PokemonSealed> allSealed() {
         return sealedRepo.findAll();
@@ -105,5 +108,9 @@ public class PokemonService {
         product.setVerified(true);
 
         return sealedRepo.save(product);
+    }
+
+    public List<PokemonSealed> getSealedStock() {
+        return sealedRepo.findInStock();
     }
 }

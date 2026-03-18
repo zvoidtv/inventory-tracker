@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pokémon Sealed Print</title>
+
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --text:#111827;
+            --muted:#6b7280;
+            --border:#d1d5db;
+            --blue:#2563eb;
+            --blue2:#1d4ed8;
+        }
+
+        *{ box-sizing:border-box; }
+
+        body{
+            margin:0;
+            font-family: Arial, Helvetica, sans-serif;
+            background:var(--bg);
+            color:var(--text);
+        }
+
+        .page-shell{
+            max-width:1100px;
+            margin:0 auto;
+            padding:24px;
+        }
+
+        .toolbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:20px;
+            flex-wrap:wrap;
+        }
+
+        .title-wrap h1{
+            margin:0;
+            font-size:30px;
+        }
+
+        .title-wrap p{
+            margin:6px 0 0;
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .toolbar-actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            border:0;
+            border-radius:10px;
+            padding:10px 14px;
+            font-weight:700;
+            font-size:14px;
+            cursor:pointer;
+            color:#fff;
+            background:var(--blue);
+        }
+
+        .btn:hover{
+            background:var(--blue2);
+        }
+
+        .btn.secondary{
+            background:#111827;
+        }
+
+        .group{
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:14px;
+            padding:18px;
+            margin-bottom:24px;
+            break-after:page;
+            page-break-after:always;
+        }
+
+        .group:last-child{
+            break-after:auto;
+            page-break-after:auto;
+        }
+
+        .group-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:end;
+            gap:12px;
+            margin-bottom:14px;
+            padding-bottom:10px;
+            border-bottom:2px solid var(--border);
+        }
+
+        .group-header h2{
+            margin:0;
+            font-size:24px;
+        }
+
+        .group-header .count{
+            color:var(--muted);
+            font-size:14px;
+            font-weight:700;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            table-layout:fixed;
+        }
+
+        thead th{
+            text-align:left;
+            font-size:13px;
+            letter-spacing:.04em;
+            text-transform:uppercase;
+            color:#374151;
+            border-bottom:2px solid var(--border);
+            padding:10px 8px;
+        }
+
+        tbody td{
+            border-bottom:1px solid #e5e7eb;
+            padding:10px 8px;
+            font-size:15px;
+            vertical-align:top;
+        }
+
+        tbody tr:last-child td{
+            border-bottom:none;
+        }
+
+        .col-name{
+            width:70%;
+            font-weight:700;
+            word-break:break-word;
+        }
+
+        .col-price{
+            width:30%;
+            text-align:right;
+            white-space:nowrap;
+            font-weight:700;
+        }
+
+        .empty{
+            background:#fff;
+            border:1px dashed var(--border);
+            border-radius:14px;
+            padding:20px;
+            color:var(--muted);
+            text-align:center;
+        }
+
+        @media print{
+            body{
+                background:#fff;
+            }
+
+            .page-shell{
+                max-width:none;
+                margin:0;
+                padding:0;
+            }
+
+            .toolbar{
+                display:none;
+            }
+
+            .group{
+                border:none;
+                border-radius:0;
+                padding:0;
+                margin:0 0 24px 0;
+                box-shadow:none;
+            }
+
+            @page{
+                size:auto;
+                margin:0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <div class="toolbar">
+        <div class="title-wrap">
+            <h1>Pokémon Sealed Print List</h1>
+            <p>Only products with quantity 1 or more. Grouped by product type.</p>
+        </div>
+
+        <div class="toolbar-actions">
+            <button class="btn secondary" type="button" onclick="window.location.href='/inventory/pokemon'">Back</button>
+            <button class="btn" type="button" onclick="window.print()">Print / Save PDF</button>
+        </div>
+    </div>
+
+    <div id="printContent">
+        <div class="empty">Loading sealed inventory…</div>
+    </div>
+</div>
+
+<script>
+    function normalizeType(value){
+        if (value === null || value === undefined) return 'Other';
+        const trimmed = String(value).trim();
+        return trimmed === '' ? 'Other' : trimmed;
+    }
+
+    function formatPrice(value){
+        if (value === null || value === undefined || String(value).trim() === '') {
+            return '$0.00';
+        }
+        const num = Number(value);
+        return Number.isNaN(num) ? `$${value}` : `$${num.toFixed(2)}`;
+    }
+
+    function sortByName(a, b){
+        const aName = String(a.name || '').toLowerCase();
+        const bName = String(b.name || '').toLowerCase();
+        return aName.localeCompare(bName);
+    }
+
+    function groupProducts(products){
+        const grouped = {};
+
+        products.forEach(item => {
+            const qty = Number(item.quantity || 0);
+            if (qty < 1) return;
+
+            const type = normalizeType(item.productType);
+
+            if (!grouped[type]) grouped[type] = [];
+            grouped[type].push(item);
+        });
+
+        Object.keys(grouped).forEach(key => grouped[key].sort(sortByName));
+
+        return Object.keys(grouped)
+            .sort((a, b) => a.localeCompare(b))
+            .map(key => ({ productType: key, items: grouped[key] }));
+    }
+
+    function buildGroupSection(group){
+        const section = document.createElement('section');
+        section.className = 'group';
+
+        const header = document.createElement('div');
+        header.className = 'group-header';
+
+        const title = document.createElement('h2');
+        title.textContent = group.productType;
+
+        const count = document.createElement('div');
+        count.className = 'count';
+        count.textContent = `${group.items.length} item${group.items.length === 1 ? '' : 's'}`;
+
+        header.appendChild(title);
+        header.appendChild(count);
+
+        const table = document.createElement('table');
+
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+        <tr>
+          <th class="col-name">Name</th>
+          <th class="col-price">Price</th>
+        </tr>
+      `;
+
+        const tbody = document.createElement('tbody');
+
+        group.items.forEach(item => {
+            const tr = document.createElement('tr');
+
+            const tdName = document.createElement('td');
+            tdName.className = 'col-name';
+            tdName.textContent = item.name || '(No name)';
+
+            const tdPrice = document.createElement('td');
+            tdPrice.className = 'col-price';
+            tdPrice.textContent = formatPrice(item.price);
+
+            tr.appendChild(tdName);
+            tr.appendChild(tdPrice);
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        section.appendChild(header);
+        section.appendChild(table);
+
+        return section;
+    }
+
+    async function loadPrintData(){
+        const container = document.getElementById('printContent');
+        container.innerHTML = '<div class="empty">Loading sealed inventory…</div>';
+
+        try {
+            const response = await fetch('/inventory/pokemon/sealed/print/data', {
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to load data: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const groups = groupProducts(Array.isArray(data) ? data : []);
+
+            container.innerHTML = '';
+
+            if (groups.length === 0) {
+                container.innerHTML = '<div class="empty">No sealed products with quantity 1 or more were found.</div>';
+                return;
+            }
+
+            groups.forEach(group => {
+                container.appendChild(buildGroupSection(group));
+            });
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<div class="empty">Could not load sealed print data.</div>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPrintData);
+</script>
+</body>
+</html>

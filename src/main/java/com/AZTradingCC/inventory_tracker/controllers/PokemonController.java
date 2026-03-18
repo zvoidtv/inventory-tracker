@@ -106,6 +106,18 @@ public class PokemonController {
         return pokemonService.verifySealedPrice(id);
     }
 
+    @GetMapping("/pokemon/sealed/print")
+    public String getPokemonSealedPrintPage(CsrfToken csrfToken) {
+        csrfToken.getToken();
+        return "PokemonSealedPrint";
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/pokemon/sealed/print/data", produces = "application/json")
+    public List<PokemonSealed> getSealedPrintData() {
+        return pokemonService.getSealedStock();
+    }
+
 
 }
 
