@@ -990,6 +990,8 @@
     let filtered = data;
     filtered = applySetYearFilters(filtered, type);
 
+    filtered = filtered.filter(p => Number(p?.quantity ?? p?.qty ?? 0) >= 1);
+
     if (type === 'singles') {
       if (singlesMode === 'raw') {
         filtered = filtered.filter(p => {

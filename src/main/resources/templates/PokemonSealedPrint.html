@@ -196,7 +196,7 @@
     <div class="toolbar">
         <div class="title-wrap">
             <h1>Pokémon Sealed Print List</h1>
-            <p>Only products with quantity 1 or more. Grouped by product type.</p>
+            <p>Only products with quantity 1 or more. Grouped into print pages.</p>
         </div>
 
         <div class="toolbar-actions">
@@ -211,10 +211,9 @@
 </div>
 
 <script>
-    function normalizeType(value){
-        if (value === null || value === undefined) return 'Other';
-        const trimmed = String(value).trim();
-        return trimmed === '' ? 'Other' : trimmed;
+    function normalizeText(value){
+        if (value === null || value === undefined) return '';
+        return String(value).trim().toLowerCase();
     }
 
     function formatPrice(value){
@@ -231,24 +230,90 @@
         return aName.localeCompare(bName);
     }
 
-    function groupProducts(products){
-        const grouped = {};
+    function isEliteTrainerBox(item){
+        const productType = normalizeText(item.productType);
+        const name = normalizeText(item.name);
+        const combined = `${productType} ${name}`;
+
+        return (
+            combined.includes('elite trainer box') ||
+            combined.includes('elite trainer boxes') ||
+            combined.includes(' etb') ||
+            combined.startsWith('etb ') ||
+            combined === 'etb'
+        );
+    }
+
+    function isBoosterBox(item){
+        const productType = normalizeText(item.productType);
+        const name = normalizeText(item.name);
+        const combined = `${productType} ${name}`;
+
+        return combined.includes('booster box') || combined.includes('booster boxes');
+    }
+
+    function getForeignLanguage(item){
+        const specialty = normalizeText(item.specialty);
+
+        if (specialty.includes('japanese')) return 'japanese';
+        if (specialty.includes('chinese')) return 'chinese';
+        return '';
+    }
+
+    function isForeignBox(item){
+        return getForeignLanguage(item) !== '';
+    }
+
+    function buildOrderedGroups(products){
+        const foreignJapanese = [];
+        const foreignChinese = [];
+        const englishBoosterBoxes = [];
+        const eliteTrainerBoxes = [];
+        const everythingElse = [];
 
         products.forEach(item => {
             const qty = Number(item.quantity || 0);
             if (qty < 1) return;
 
-            const type = normalizeType(item.productType);
+            if (isForeignBox(item)) {
+                const lang = getForeignLanguage(item);
+                if (lang === 'japanese') {
+                    foreignJapanese.push(item);
+                } else if (lang === 'chinese') {
+                    foreignChinese.push(item);
+                } else {
+                    everythingElse.push(item);
+                }
+                return;
+            }
 
-            if (!grouped[type]) grouped[type] = [];
-            grouped[type].push(item);
+            if (isEliteTrainerBox(item)) {
+                eliteTrainerBoxes.push(item);
+                return;
+            }
+
+            if (isBoosterBox(item)) {
+                englishBoosterBoxes.push(item);
+                return;
+            }
+
+            everythingElse.push(item);
         });
 
-        Object.keys(grouped).forEach(key => grouped[key].sort(sortByName));
+        foreignJapanese.sort(sortByName);
+        foreignChinese.sort(sortByName);
+        englishBoosterBoxes.sort(sortByName);
+        eliteTrainerBoxes.sort(sortByName);
+        everythingElse.sort(sortByName);
 
-        return Object.keys(grouped)
-            .sort((a, b) => a.localeCompare(b))
-            .map(key => ({ productType: key, items: grouped[key] }));
+        const foreignCombined = [...foreignJapanese, ...foreignChinese];
+
+        return [
+            { productType: 'Foreign Boxes', items: foreignCombined },
+            { productType: 'English Booster Boxes', items: englishBoosterBoxes },
+            { productType: 'Elite Trainer Boxes', items: eliteTrainerBoxes },
+            { productType: 'Everything Else', items: everythingElse }
+        ].filter(group => group.items.length > 0);
     }
 
     function buildGroupSection(group){
@@ -319,7 +384,7 @@
             }
 
             const data = await response.json();
-            const groups = groupProducts(Array.isArray(data) ? data : []);
+            const groups = buildOrderedGroups(Array.isArray(data) ? data : []);
 
             container.innerHTML = '';
 
