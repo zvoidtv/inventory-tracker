@@ -5,9 +5,12 @@ import com.AZTradingCC.inventory_tracker.dto.PokemonSealedSearch;
 import com.AZTradingCC.inventory_tracker.model.PokemonSingles;
 import com.AZTradingCC.inventory_tracker.model.PokemonSealed;
 import com.AZTradingCC.inventory_tracker.service.PokemonService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,14 +26,18 @@ public class PokemonController {
         this.pokemonService = pokemonService;
     }
 
-    // 1️⃣ Serve the HTML page
     @GetMapping("/pokemon")
-    public String getPokemonPage(CsrfToken csrfToken) {
+    public String getPokemonPage(CsrfToken csrfToken, Authentication authentication, Model model) {
         csrfToken.getToken(); // forces token creation
+
+        boolean canEdit = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+
+        model.addAttribute("canEdit", canEdit);
         return "PokemonSearch";
     }
 
-    // 2️⃣ JSON endpoint for searches
     @ResponseBody
     @GetMapping(value = "/pokemon/search", produces = "application/json")
     public List<?> searchPokemon(
@@ -77,6 +84,7 @@ public class PokemonController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/pokemon/singles/{id}/price", produces = "application/json")
     public PokemonSingles updateSinglesPrice(
             @PathVariable Long id,
@@ -86,12 +94,14 @@ public class PokemonController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/pokemon/singles/{id}/verify", produces = "application/json")
     public PokemonSingles verifySinglesPrice(@PathVariable Long id) {
         return pokemonService.verifySinglesPrice(id);
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/pokemon/sealed/{id}/price", produces = "application/json")
     public PokemonSealed updateSealedPrice(
             @PathVariable Long id,
@@ -101,6 +111,7 @@ public class PokemonController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/pokemon/sealed/{id}/verify", produces = "application/json")
     public PokemonSealed verifySealedPrice(@PathVariable Long id) {
         return pokemonService.verifySealedPrice(id);
@@ -117,9 +128,4 @@ public class PokemonController {
     public List<PokemonSealed> getSealedPrintData() {
         return pokemonService.getSealedStock();
     }
-
-
 }
-
-
-
