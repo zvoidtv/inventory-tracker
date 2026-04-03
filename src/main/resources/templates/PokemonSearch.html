@@ -502,6 +502,14 @@
 
     <div class="header-actions">
       <button
+              id="editInventoryBtn"
+              class="btn hidden"
+              type="button"
+              onclick="window.location.href='/inventory/pokemon/edit'">
+        Edit Inventory
+      </button>
+
+      <button
               id="sealedPrintBtn"
               class="btn green hidden"
               type="button"
@@ -635,6 +643,13 @@
     badge.classList.toggle('admin', canEdit);
     badge.classList.toggle('viewer', !canEdit);
     badge.textContent = canEdit ? 'Admin Mode' : 'Viewer Mode';
+  }
+
+  function updateAdminButtons(){
+    const editBtn = document.getElementById('editInventoryBtn');
+    if (editBtn) {
+      editBtn.classList.toggle('hidden', !canEdit);
+    }
   }
 
   function updateTopButtons(){
@@ -1149,6 +1164,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     updateRoleBadge();
+    updateAdminButtons();
     setCategory('singles');
     setSinglesMode('raw', false);
     updateTopButtons();

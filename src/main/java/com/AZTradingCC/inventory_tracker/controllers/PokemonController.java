@@ -128,4 +128,17 @@ public class PokemonController {
     public List<PokemonSealed> getSealedPrintData() {
         return pokemonService.getSealedStock();
     }
+
+    @GetMapping("/pokemon/edit")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String getPokemonEditPage(CsrfToken csrfToken, Authentication authentication, Model model) {
+        csrfToken.getToken();
+
+        boolean canEdit = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+
+        model.addAttribute("canEdit", canEdit);
+        return "PokemonEdit";
+    }
 }

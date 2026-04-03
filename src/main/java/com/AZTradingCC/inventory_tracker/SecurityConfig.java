@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/inventory/pokemon").hasAnyRole("ADMIN", "VIEWER")
                         .requestMatchers("/inventory/pokemon/sealed/print").hasAnyRole("ADMIN", "VIEWER")
                         .requestMatchers("/inventory/pokemon/sealed/print/data").hasAnyRole("ADMIN", "VIEWER")
+                        .requestMatchers("/inventory/pokemon/edit").hasRole("ADMIN")
 
                         .requestMatchers("/inventory/pokemon/singles/*/price").hasRole("ADMIN")
                         .requestMatchers("/inventory/pokemon/singles/*/verify").hasRole("ADMIN")

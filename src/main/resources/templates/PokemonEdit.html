@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pokémon Inventory Editor</title>
+
+    <style>
+        :root{
+            --bg:#f5f7fb;
+            --card:#ffffff;
+            --text:#111827;
+            --muted:#6b7280;
+            --border:#e5e7eb;
+            --blue:#2563eb;
+            --blue2:#1d4ed8;
+            --green:#16a34a;
+            --green2:#15803d;
+            --red:#dc2626;
+            --red2:#b91c1c;
+            --shadow:0 8px 20px rgba(17,24,39,.08);
+            --radius:14px;
+        }
+
+        *{ box-sizing:border-box; }
+
+        body{
+            margin:0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background:var(--bg);
+            color:var(--text);
+        }
+
+        .container{
+            max-width:1200px;
+            margin:0 auto;
+            padding:24px 16px 40px;
+        }
+
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+        }
+
+        h1{
+            margin:0;
+            font-size:28px;
+        }
+
+        .sub{
+            margin-top:6px;
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .panel{
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+            padding:16px;
+            margin-bottom:18px;
+        }
+
+        .row{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            align-items:center;
+        }
+
+        .field{
+            flex:1;
+            min-width:240px;
+        }
+
+        label{
+            display:block;
+            font-size:12px;
+            font-weight:800;
+            margin-bottom:6px;
+            color:#374151;
+        }
+
+        input, select{
+            width:100%;
+            padding:10px 12px;
+            border:1px solid var(--border);
+            border-radius:10px;
+            font-size:14px;
+            background:#fff;
+        }
+
+        .btn{
+            border:0;
+            border-radius:10px;
+            padding:10px 14px;
+            font-weight:800;
+            font-size:14px;
+            cursor:pointer;
+            color:#fff;
+            background:var(--blue);
+        }
+
+        .btn:hover{ background:var(--blue2); }
+
+        .btn.green{
+            background:var(--green);
+        }
+
+        .btn.green:hover{
+            background:var(--green2);
+        }
+
+        .btn.red{
+            background:var(--red);
+        }
+
+        .btn.red:hover{
+            background:var(--red2);
+        }
+
+        .muted{
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .placeholder-box{
+            border:1px dashed var(--border);
+            border-radius:12px;
+            padding:18px;
+            color:var(--muted);
+            background:#fff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>Pokémon Inventory Editor</h1>
+            <div class="sub">Admin-only inventory add / remove page</div>
+        </div>
+
+        <div class="row">
+            <button class="btn" type="button" onclick="window.location.href='/inventory/pokemon'">Back to Inventory</button>
+            <button class="btn green" type="button" id="saveBtn">Save</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="row">
+            <div class="field">
+                <label for="editorType">Inventory Type</label>
+                <select id="editorType">
+                    <option value="sealed">Sealed</option>
+                    <option value="singles">Singles</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="editorName">Search / Add by Name</label>
+                <input id="editorName" type="text" placeholder="Start typing product or card name..." />
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2 style="margin-top:0;">Suggestions</h2>
+        <div id="suggestionsBox" class="placeholder-box">
+            Matching items will show here in the next step.
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2 style="margin-top:0;">Pending Changes</h2>
+        <div id="pendingChangesBox" class="placeholder-box">
+            Quantity increases, decreases, removals, and new items will be staged here before Save.
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const canEdit = /*[[${canEdit}]]*/ false;
+</script>
+
+<script>
+    if (!canEdit) {
+        alert('You do not have permission to access this page.');
+        window.location.href = '/inventory/pokemon';
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        alert('Save behavior comes in a later step.');
+    });
+</script>
+</body>
+</html>
