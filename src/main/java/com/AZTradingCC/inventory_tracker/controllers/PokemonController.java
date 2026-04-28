@@ -53,7 +53,8 @@ public class PokemonController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) BigDecimal price,
             @RequestParam(required = false) LocalDateTime timeStmp,
-            @RequestParam(required = false) Boolean verified
+            @RequestParam(required = false) Boolean verified,
+            @RequestParam(required = false) String specialtyQuery
     ) {
         if ("singles".equals(type)) {
             PokemonSinglesSearch search = new PokemonSinglesSearch();
@@ -68,6 +69,7 @@ public class PokemonController {
             search.setPrice(price);
             search.setTimeStamp(timeStmp);
             search.setVerified(verified);
+            search.setSpecialty(specialtyQuery);
             return pokemonService.searchSingles(search);
         } else {
             PokemonSealedSearch search = new PokemonSealedSearch();
@@ -79,6 +81,7 @@ public class PokemonController {
             search.setPrice(price);
             search.setTimeStamp(timeStmp);
             search.setVerified(verified);
+            search.setSpecialty(specialtyQuery);
             return pokemonService.searchSealed(search);
         }
     }

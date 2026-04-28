@@ -18,8 +18,12 @@
             --green2:#15803d;
             --red:#dc2626;
             --red2:#b91c1c;
-            --shadow:0 8px 20px rgba(17,24,39,.08);
+            --amber:#d97706;
+            --amber2:#b45309;
+            --shadow2:0 2px 10px rgba(17,24,39,.06);
             --radius:14px;
+            --focus:0 0 0 3px rgba(37,99,235,.16);
+            --chip:#eef2ff;
         }
 
         *{ box-sizing:border-box; }
@@ -32,7 +36,7 @@
         }
 
         .container{
-            max-width:1200px;
+            max-width:1280px;
             margin:0 auto;
             padding:24px 16px 40px;
         }
@@ -40,7 +44,7 @@
         .header{
             display:flex;
             justify-content:space-between;
-            align-items:center;
+            align-items:flex-start;
             gap:12px;
             flex-wrap:wrap;
             margin-bottom:18px;
@@ -49,6 +53,7 @@
         h1{
             margin:0;
             font-size:28px;
+            letter-spacing:-.02em;
         }
 
         .sub{
@@ -61,7 +66,7 @@
             background:var(--card);
             border:1px solid var(--border);
             border-radius:var(--radius);
-            box-shadow:var(--shadow);
+            box-shadow:var(--shadow2);
             padding:16px;
             margin-bottom:18px;
         }
@@ -70,13 +75,18 @@
             display:flex;
             gap:10px;
             flex-wrap:wrap;
-            align-items:center;
+            align-items:flex-end;
         }
 
         .field{
             flex:1;
-            min-width:240px;
+            min-width:190px;
         }
+
+        .field.w2{ flex:0.8; min-width:140px; }
+        .field.w3{ flex:1.2; min-width:180px; }
+        .field.w4{ flex:1.5; min-width:230px; }
+        .field.w6{ flex:2.2; min-width:300px; }
 
         label{
             display:block;
@@ -84,6 +94,7 @@
             font-weight:800;
             margin-bottom:6px;
             color:#374151;
+            letter-spacing:.02em;
         }
 
         input, select{
@@ -93,6 +104,13 @@
             border-radius:10px;
             font-size:14px;
             background:#fff;
+            color:var(--text);
+            outline:none;
+        }
+
+        input:focus, select:focus{
+            border-color:rgba(37,99,235,.6);
+            box-shadow:var(--focus);
         }
 
         .btn{
@@ -107,27 +125,12 @@
         }
 
         .btn:hover{ background:var(--blue2); }
-
-        .btn.green{
-            background:var(--green);
-        }
-
-        .btn.green:hover{
-            background:var(--green2);
-        }
-
-        .btn.red{
-            background:var(--red);
-        }
-
-        .btn.red:hover{
-            background:var(--red2);
-        }
-
-        .muted{
-            color:var(--muted);
-            font-size:14px;
-        }
+        .btn.green{ background:var(--green); }
+        .btn.green:hover{ background:var(--green2); }
+        .btn.red{ background:var(--red); }
+        .btn.red:hover{ background:var(--red2); }
+        .btn.secondary{ background:#111827; }
+        .btn.secondary:hover{ background:#0b1220; }
 
         .placeholder-box{
             border:1px dashed var(--border);
@@ -135,6 +138,174 @@
             padding:18px;
             color:var(--muted);
             background:#fff;
+        }
+
+        .hidden{
+            display:none !important;
+        }
+
+        .divider{
+            height:1px;
+            background:var(--border);
+            margin:14px 0;
+        }
+
+        .pill{
+            display:flex;
+            background:#f3f4f6;
+            border:1px solid var(--border);
+            border-radius:999px;
+            overflow:hidden;
+        }
+
+        .pill button{
+            border:0;
+            background:transparent;
+            padding:8px 12px;
+            font-weight:900;
+            font-size:13px;
+            cursor:pointer;
+            color:#374151;
+        }
+
+        .pill button.active{
+            background:#fff;
+            color:#111827;
+        }
+
+        .suggestion-list,
+        .pending-list{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .suggestion-card,
+        .pending-card{
+            border:1px solid var(--border);
+            border-radius:12px;
+            background:#fff;
+            padding:14px;
+        }
+
+        .suggestion-top,
+        .pending-top{
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            align-items:flex-start;
+            flex-wrap:wrap;
+        }
+
+        .name{
+            font-size:17px;
+            font-weight:900;
+            line-height:1.2;
+            margin:0 0 6px;
+        }
+
+        .meta{
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            align-items:center;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .chip{
+            background:var(--chip);
+            color:#3730a3;
+            font-weight:900;
+            font-size:12px;
+            padding:4px 8px;
+            border-radius:999px;
+            border:1px solid rgba(55,48,163,.12);
+        }
+
+        .chip.red{
+            background:#fee2e2;
+            color:#b91c1c;
+            border-color:#fecaca;
+        }
+
+        .chip.green{
+            background:#dcfce7;
+            color:#166534;
+            border-color:#bbf7d0;
+        }
+
+        .chip.gray{
+            background:#f3f4f6;
+            color:#4b5563;
+            border-color:#e5e7eb;
+        }
+
+        .suggestion-actions,
+        .pending-actions{
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            align-items:center;
+        }
+
+        .mini-btn{
+            border:0;
+            border-radius:10px;
+            padding:8px 10px;
+            font-weight:900;
+            font-size:13px;
+            cursor:pointer;
+            color:#fff;
+        }
+
+        .mini-btn.plus{ background:var(--green); }
+        .mini-btn.plus:hover{ background:var(--green2); }
+        .mini-btn.minus{ background:var(--red); }
+        .mini-btn.minus:hover{ background:var(--red2); }
+        .mini-btn.remove{ background:#111827; }
+        .mini-btn.remove:hover{ background:#0b1220; }
+
+        .kv{
+            display:grid;
+            grid-template-columns:120px 1fr;
+            gap:6px 10px;
+            margin-top:10px;
+            padding-top:10px;
+            border-top:1px solid var(--border);
+        }
+
+        .k{
+            color:#374151;
+            font-weight:900;
+            font-size:12px;
+            text-transform:capitalize;
+        }
+
+        .v{
+            color:#111827;
+            font-size:14px;
+            word-break:break-word;
+        }
+
+        .summary-row{
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-top:8px;
+            font-size:13px;
+            color:var(--muted);
+        }
+
+        @media (max-width: 700px){
+            .field,
+            .field.w2,
+            .field.w3,
+            .field.w4,
+            .field.w6{
+                min-width:100%;
+            }
         }
     </style>
 </head>
@@ -147,39 +318,157 @@
         </div>
 
         <div class="row">
-            <button class="btn" type="button" onclick="window.location.href='/inventory/pokemon'">Back to Inventory</button>
+            <button class="btn secondary" type="button" onclick="window.location.href='/inventory/pokemon'">Back to Inventory</button>
             <button class="btn green" type="button" id="saveBtn">Save</button>
         </div>
     </div>
 
     <div class="panel">
         <div class="row">
-            <div class="field">
+            <div class="field w3">
                 <label for="editorType">Inventory Type</label>
                 <select id="editorType">
-                    <option value="sealed">Sealed</option>
                     <option value="singles">Singles</option>
+                    <option value="sealed">Sealed</option>
                 </select>
             </div>
 
-            <div class="field">
-                <label for="editorName">Search / Add by Name</label>
-                <input id="editorName" type="text" placeholder="Start typing product or card name..." />
+            <div class="field w3">
+                <label>Singles Search Mode</label>
+                <div class="pill" id="singlesModePill" aria-label="Condition / Graded toggle">
+                    <button id="editorModeRaw" type="button" class="active">Condition</button>
+                    <button id="editorModeGraded" type="button">Graded</button>
+                </div>
+            </div>
+
+            <div class="field w6">
+                <label>&nbsp;</label>
+                <div class="row" style="justify-content:flex-end;">
+                    <button class="btn secondary" type="button" id="clearEditorBtn">Clear</button>
+                    <button class="btn" type="button" id="searchEditorBtn">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="editorSinglesFields">
+            <div class="row">
+                <div class="field w6">
+                    <label for="editorSinglesName">Name</label>
+                    <input id="editorSinglesName" type="text" placeholder="Pokémon name" />
+                </div>
+
+                <div class="field w3">
+                    <label for="editorSinglesCollectorNumber">Collector #</label>
+                    <input id="editorSinglesCollectorNumber" type="text" placeholder="card / promo #" />
+                </div>
+
+                <div class="field w3" id="editorConditionWrap">
+                    <label for="editorSinglesCondition">Condition</label>
+                    <input id="editorSinglesCondition" type="text" placeholder="MNT, NM, LP, MP..." />
+                </div>
+
+                <div class="field w3 hidden" id="editorGradedCompanyWrap">
+                    <label for="editorSinglesGradedCompany">Graded Company</label>
+                    <input id="editorSinglesGradedCompany" type="text" placeholder="PSA, BGS, CGC..." />
+                </div>
+
+                <div class="field w2 hidden" id="editorGradedValueWrap">
+                    <label for="editorSinglesGradedValue">Grade</label>
+                    <input id="editorSinglesGradedValue" type="text" placeholder="10, 9.5..." />
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="field w4">
+                    <label for="editorSinglesSet">Set</label>
+                    <input id="editorSinglesSet" type="text" placeholder="Base Set, Crown Zenith..." />
+                </div>
+
+                <div class="field w3">
+                    <label for="editorSinglesSpecialty">Specialty</label>
+                    <input id="editorSinglesSpecialty" type="text" placeholder="Japanese, Promo, etc." />
+                </div>
+
+                <div class="field w2">
+                    <label for="editorSinglesYear">Year</label>
+                    <input id="editorSinglesYear" type="number" inputmode="numeric" placeholder="1999" />
+                </div>
+
+                <div class="field w2">
+                    <label for="editorSinglesId">ID</label>
+                    <input id="editorSinglesId" type="number" placeholder="123" />
+                </div>
+            </div>
+        </div>
+
+        <div id="editorSealedFields" class="hidden">
+            <div class="row">
+                <div class="field w6">
+                    <label for="editorSealedName">Name</label>
+                    <input id="editorSealedName" type="text" placeholder="Product name" />
+                </div>
+
+                <div class="field w4">
+                    <label for="editorSealedProductType">Product Type</label>
+                    <input id="editorSealedProductType" type="text" placeholder="ETB, Booster Box, Tin..." />
+                </div>
+
+                <div class="field w4">
+                    <label for="editorSealedSet">Set</label>
+                    <input id="editorSealedSet" type="text" placeholder="Base Set..." />
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+                <div class="field w3">
+                    <label for="editorSealedSpecialty">Specialty</label>
+                    <input id="editorSealedSpecialty" type="text" placeholder="Japanese, Chinese, etc." />
+                </div>
+
+                <div class="field w2">
+                    <label for="editorSealedYear">Year</label>
+                    <input id="editorSealedYear" type="number" inputmode="numeric" placeholder="1999" />
+                </div>
+
+                <div class="field w2">
+                    <label for="editorSealedId">ID</label>
+                    <input id="editorSealedId" type="number" placeholder="456" />
+                </div>
             </div>
         </div>
     </div>
 
     <div class="panel">
-        <h2 style="margin-top:0;">Suggestions</h2>
-        <div id="suggestionsBox" class="placeholder-box">
-            Matching items will show here in the next step.
+        <div class="suggestion-top">
+            <div>
+                <h2 style="margin:0;">Suggestions</h2>
+                <div class="sub" style="margin-top:4px;">Search results from your current inventory</div>
+            </div>
+            <div class="summary-row">
+                <span id="suggestionCount">0 matches</span>
+            </div>
+        </div>
+
+        <div id="suggestionsBox" class="placeholder-box" style="margin-top:14px;">
+            Start typing and press Search.
         </div>
     </div>
 
     <div class="panel">
-        <h2 style="margin-top:0;">Pending Changes</h2>
-        <div id="pendingChangesBox" class="placeholder-box">
-            Quantity increases, decreases, removals, and new items will be staged here before Save.
+        <div class="pending-top">
+            <div>
+                <h2 style="margin:0;">Pending Changes</h2>
+                <div class="sub" style="margin-top:4px;">These are only staged on the page until Save is wired to the backend.</div>
+            </div>
+            <div class="summary-row">
+                <span id="pendingCount">0 staged</span>
+            </div>
+        </div>
+
+        <div id="pendingChangesBox" class="placeholder-box" style="margin-top:14px;">
+            Quantity increases, decreases, and removals will be staged here before Save.
         </div>
     </div>
 </div>
@@ -194,9 +483,428 @@
         window.location.href = '/inventory/pokemon';
     }
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
-        alert('Save behavior comes in a later step.');
+    let editorSinglesMode = 'raw';
+    const pendingChanges = [];
+
+    function byId(id){
+        return document.getElementById(id);
+    }
+
+    function normalizeStr(x){
+        if (x === null || x === undefined) return '';
+        return String(x).trim();
+    }
+
+    function firstNonEmpty(obj, keys){
+        for (const k of keys){
+            if (obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
+                return obj[k];
+            }
+        }
+        return '';
+    }
+
+    function toKey(type, id){
+        return `${type}::${id}`;
+    }
+
+    function escapeHtml(value){
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function setEditorTypeUI(){
+        const type = byId('editorType').value;
+        byId('editorSinglesFields').classList.toggle('hidden', type !== 'singles');
+        byId('editorSealedFields').classList.toggle('hidden', type !== 'sealed');
+        byId('singlesModePill').classList.toggle('hidden', type !== 'singles');
+    }
+
+    function setEditorSinglesMode(mode){
+        editorSinglesMode = mode;
+
+        byId('editorModeRaw').classList.toggle('active', mode === 'raw');
+        byId('editorModeGraded').classList.toggle('active', mode === 'graded');
+
+        byId('editorConditionWrap').classList.toggle('hidden', mode !== 'raw');
+        byId('editorGradedCompanyWrap').classList.toggle('hidden', mode !== 'graded');
+        byId('editorGradedValueWrap').classList.toggle('hidden', mode !== 'graded');
+
+        if (mode === 'raw') {
+            byId('editorSinglesGradedCompany').value = '';
+            byId('editorSinglesGradedValue').value = '';
+        } else {
+            byId('editorSinglesCondition').value = '';
+        }
+    }
+
+    function clearEditorSearch(){
+        [
+            'editorSinglesName',
+            'editorSinglesCollectorNumber',
+            'editorSinglesCondition',
+            'editorSinglesGradedCompany',
+            'editorSinglesGradedValue',
+            'editorSinglesSet',
+            'editorSinglesSpecialty',
+            'editorSinglesYear',
+            'editorSinglesId',
+            'editorSealedName',
+            'editorSealedProductType',
+            'editorSealedSet',
+            'editorSealedSpecialty',
+            'editorSealedYear',
+            'editorSealedId'
+        ].forEach(id => {
+            const el = byId(id);
+            if (el) el.value = '';
+        });
+
+        byId('suggestionCount').textContent = '0 matches';
+        byId('suggestionsBox').className = 'placeholder-box';
+        byId('suggestionsBox').innerHTML = 'Start typing and press Search.';
+    }
+
+    function buildSearchParams(){
+        const type = byId('editorType').value;
+        const params = new URLSearchParams();
+        params.set('type', type);
+
+        if (type === 'singles') {
+            const name = normalizeStr(byId('editorSinglesName').value);
+            const collectorNumber = normalizeStr(byId('editorSinglesCollectorNumber').value);
+            const condition = normalizeStr(byId('editorSinglesCondition').value);
+            const gradedCompany = normalizeStr(byId('editorSinglesGradedCompany').value);
+            const gradedValue = normalizeStr(byId('editorSinglesGradedValue').value);
+            const set = normalizeStr(byId('editorSinglesSet').value);
+            const year = normalizeStr(byId('editorSinglesYear').value);
+            const id = normalizeStr(byId('editorSinglesId').value);
+
+            if (name) params.set('nameQuery', name);
+            if (collectorNumber) params.set('collectorNumberQuery', collectorNumber);
+            if (set) params.set('set', set);
+            if (year) params.set('year', year);
+            if (id) params.set('idQuery', id);
+
+            if (editorSinglesMode === 'raw') {
+                if (condition) params.set('conditionQuery', condition);
+            } else {
+                if (gradedCompany) params.set('gradedCompanyQuery', gradedCompany);
+                if (gradedValue) params.set('gradedValueQuery', gradedValue);
+            }
+        } else {
+            const name = normalizeStr(byId('editorSealedName').value);
+            const productType = normalizeStr(byId('editorSealedProductType').value);
+            const set = normalizeStr(byId('editorSealedSet').value);
+            const year = normalizeStr(byId('editorSealedYear').value);
+            const id = normalizeStr(byId('editorSealedId').value);
+
+            if (name) params.set('nameQuery', name);
+            if (productType) params.set('productTypeQuery', productType);
+            if (set) params.set('set', set);
+            if (year) params.set('year', year);
+            if (id) params.set('idQuery', id);
+        }
+
+        return params;
+    }
+
+    async function loadEditorSuggestions(){
+        const params = buildSearchParams();
+        const box = byId('suggestionsBox');
+
+        box.className = 'placeholder-box';
+        box.innerHTML = 'Loading...';
+
+        try {
+            const res = await fetch(`/inventory/pokemon/search?${params.toString()}`, {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+
+            if (!res.ok) {
+                throw new Error(`Search failed with status ${res.status}`);
+            }
+
+            const items = await res.json();
+            renderSuggestions(items);
+        } catch (err) {
+            console.error(err);
+            byId('suggestionCount').textContent = '0 matches';
+            box.className = 'placeholder-box';
+            box.innerHTML = 'Search failed. Check the browser console.';
+        }
+    }
+
+    function addKvRow(parts, label, value){
+        if (value === '' || value === null || value === undefined) return;
+        parts.push(`<div class="k">${escapeHtml(label)}</div><div class="v">${escapeHtml(value)}</div>`);
+    }
+
+    function renderSuggestions(items){
+        const box = byId('suggestionsBox');
+        const type = byId('editorType').value;
+
+        byId('suggestionCount').textContent = `${items.length} match${items.length === 1 ? '' : 'es'}`;
+
+        if (!items || items.length === 0) {
+            box.className = 'placeholder-box';
+            box.innerHTML = 'No matching items found.';
+            return;
+        }
+
+        box.className = 'suggestion-list';
+        box.innerHTML = '';
+
+        items.forEach(item => {
+            const idVal = firstNonEmpty(item, ['id']);
+            const key = toKey(type, idVal);
+            const quantity = firstNonEmpty(item, ['quantity']) || 0;
+            const name = firstNonEmpty(item, ['name']) || '(No name)';
+            const set = firstNonEmpty(item, ['set']);
+            const year = firstNonEmpty(item, ['year']);
+            const specialty = firstNonEmpty(item, ['specialty']);
+            const condition = firstNonEmpty(item, ['condition']);
+            const collectorNumber = firstNonEmpty(item, ['collectorNumber']);
+            const gradedCompany = firstNonEmpty(item, ['gradedCompany', 'gradedcompany']);
+            const graded = firstNonEmpty(item, ['graded', 'grade']);
+            const productType = firstNonEmpty(item, ['productType']);
+            const price = firstNonEmpty(item, ['price']);
+
+            const card = document.createElement('div');
+            card.className = 'suggestion-card';
+
+            const kvParts = [];
+            addKvRow(kvParts, 'ID', idVal);
+            addKvRow(kvParts, 'Quantity', quantity);
+            if (type === 'singles') {
+                addKvRow(kvParts, 'Collector #', collectorNumber);
+                addKvRow(kvParts, 'Condition', condition);
+                addKvRow(kvParts, 'Graded Company', gradedCompany);
+                addKvRow(kvParts, 'Grade', graded);
+            } else {
+                addKvRow(kvParts, 'Product Type', productType);
+            }
+            addKvRow(kvParts, 'Set', set);
+            addKvRow(kvParts, 'Year', year);
+            addKvRow(kvParts, 'Specialty', specialty);
+            addKvRow(kvParts, 'Price', price);
+
+            card.innerHTML = `
+                <div class="suggestion-top">
+                    <div>
+                        <div class="name">${escapeHtml(name)}</div>
+                        <div class="meta">
+                            <span class="chip gray">${escapeHtml(type)}</span>
+                            <span class="chip">Qty: ${escapeHtml(quantity)}</span>
+                            ${set ? `<span class="chip">${escapeHtml(set)}</span>` : ''}
+                            ${specialty ? `<span class="chip red">${escapeHtml(specialty)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="suggestion-actions">
+                        <button class="mini-btn plus" type="button">+1</button>
+                        <button class="mini-btn minus" type="button">-1</button>
+                        <button class="mini-btn remove" type="button">Remove All</button>
+                    </div>
+                </div>
+                <div class="kv">
+                    ${kvParts.join('')}
+                </div>
+            `;
+
+            const [plusBtn, minusBtn, removeBtn] = card.querySelectorAll('button');
+
+            plusBtn.addEventListener('click', () => stageChange({
+                key,
+                type,
+                id: idVal,
+                name,
+                delta: 1,
+                action: 'adjust'
+            }));
+
+            minusBtn.addEventListener('click', () => stageChange({
+                key,
+                type,
+                id: idVal,
+                name,
+                delta: -1,
+                action: 'adjust'
+            }));
+
+            removeBtn.addEventListener('click', () => stageChange({
+                key,
+                type,
+                id: idVal,
+                name,
+                removeAll: true,
+                action: 'remove'
+            }));
+
+            box.appendChild(card);
+        });
+    }
+
+    function stageChange(change){
+        const existing = pendingChanges.find(x => x.key === change.key);
+
+        if (change.action === 'remove') {
+            if (existing) {
+                existing.action = 'remove';
+                existing.removeAll = true;
+                existing.delta = 0;
+            } else {
+                pendingChanges.push({
+                    key: change.key,
+                    type: change.type,
+                    id: change.id,
+                    name: change.name,
+                    delta: 0,
+                    removeAll: true,
+                    action: 'remove'
+                });
+            }
+            renderPendingChanges();
+            return;
+        }
+
+        if (existing) {
+            if (existing.action === 'remove') {
+                existing.action = 'adjust';
+                existing.removeAll = false;
+                existing.delta = 0;
+            }
+
+            existing.delta += change.delta;
+
+            if (existing.delta === 0) {
+                const index = pendingChanges.findIndex(x => x.key === change.key);
+                if (index >= 0) pendingChanges.splice(index, 1);
+            }
+        } else {
+            pendingChanges.push({
+                key: change.key,
+                type: change.type,
+                id: change.id,
+                name: change.name,
+                delta: change.delta,
+                removeAll: false,
+                action: 'adjust'
+            });
+        }
+
+        renderPendingChanges();
+    }
+
+    function renderPendingChanges(){
+        const box = byId('pendingChangesBox');
+        byId('pendingCount').textContent = `${pendingChanges.length} staged`;
+
+        if (pendingChanges.length === 0) {
+            box.className = 'placeholder-box';
+            box.innerHTML = 'Quantity increases, decreases, and removals will be staged here before Save.';
+            return;
+        }
+
+        box.className = 'pending-list';
+        box.innerHTML = '';
+
+        pendingChanges.forEach((change, index) => {
+            const card = document.createElement('div');
+            card.className = 'pending-card';
+
+            const actionText = change.action === 'remove'
+                ? 'Remove all quantity'
+                : `${change.delta > 0 ? '+' : ''}${change.delta} quantity`;
+
+            card.innerHTML = `
+                <div class="pending-top">
+                    <div>
+                        <div class="name">${escapeHtml(change.name)}</div>
+                        <div class="meta">
+                            <span class="chip gray">${escapeHtml(change.type)}</span>
+                            <span class="chip">ID: ${escapeHtml(change.id)}</span>
+                            <span class="chip green">${escapeHtml(actionText)}</span>
+                        </div>
+                    </div>
+                    <div class="pending-actions">
+                        <button class="mini-btn remove" type="button">Remove Stage</button>
+                    </div>
+                </div>
+            `;
+
+            card.querySelector('button').addEventListener('click', () => {
+                pendingChanges.splice(index, 1);
+                renderPendingChanges();
+            });
+
+            box.appendChild(card);
+        });
+    }
+
+    byId('editorType').addEventListener('change', () => {
+        setEditorTypeUI();
+        loadEditorSuggestions();
     });
+
+    byId('editorModeRaw').addEventListener('click', () => {
+        setEditorSinglesMode('raw');
+        loadEditorSuggestions();
+    });
+
+    byId('editorModeGraded').addEventListener('click', () => {
+        setEditorSinglesMode('graded');
+        loadEditorSuggestions();
+    });
+
+    byId('clearEditorBtn').addEventListener('click', () => {
+        clearEditorSearch();
+    });
+
+    byId('searchEditorBtn').addEventListener('click', () => {
+        loadEditorSuggestions();
+    });
+
+    [
+        'editorSinglesName',
+        'editorSinglesCollectorNumber',
+        'editorSinglesCondition',
+        'editorSinglesGradedCompany',
+        'editorSinglesGradedValue',
+        'editorSinglesSet',
+        'editorSinglesSpecialty',
+        'editorSinglesYear',
+        'editorSinglesId',
+        'editorSealedName',
+        'editorSealedProductType',
+        'editorSealedSet',
+        'editorSealedSpecialty',
+        'editorSealedYear',
+        'editorSealedId'
+    ].forEach(id => {
+        const el = byId(id);
+        if (!el) return;
+
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loadEditorSuggestions();
+            }
+        });
+    });
+
+    byId('saveBtn').addEventListener('click', () => {
+        console.log('Pending changes:', pendingChanges);
+        alert('The page staging works now, but Save still needs the backend save endpoint.');
+    });
+
+    setEditorTypeUI();
+    setEditorSinglesMode('raw');
+    renderPendingChanges();
 </script>
 </body>
 </html>
